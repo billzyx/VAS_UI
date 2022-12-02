@@ -2,6 +2,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout
 
+from account import AccountSettingsWidget
+
 
 class DownloadingWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -10,11 +12,20 @@ class DownloadingWidget(QtWidgets.QWidget):
         # create headline label
         headline_label = QtWidgets.QLabel("Downloading")
 
+        def add_account():
+            self.account_window = AccountSettingsWidget()
+            self.account_window.show()
+
+        def add_session():
+            pass
+
         # create list widgets and buttons
         list_widget1 = QtWidgets.QListWidget()
         list_widget2 = QtWidgets.QListWidget()
-        button1 = QtWidgets.QPushButton("Select")
-        button2 = QtWidgets.QPushButton("Select")
+        button1 = QtWidgets.QPushButton("Add Account")
+        button1.clicked.connect(add_account)
+        button2 = QtWidgets.QPushButton("Add Session")
+        button2.clicked.connect(add_session)
 
         # add checkboxes to list widgets
         for i in range(3):
