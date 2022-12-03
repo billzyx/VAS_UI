@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout
 
 from account import AccountSettingsWidget
+from session import SessionSettingsWidget
 
 
 class DownloadingWidget(QtWidgets.QWidget):
@@ -17,7 +18,8 @@ class DownloadingWidget(QtWidgets.QWidget):
             self.account_window.show()
 
         def add_session():
-            pass
+            self.account_window = SessionSettingsWidget()
+            self.account_window.show()
 
         # create list widgets and buttons
         list_widget1 = QtWidgets.QListWidget()
