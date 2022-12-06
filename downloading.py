@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayo
 from account import AccountSettingsWidget
 from session import SessionSettingsWidget
 
+import config_tool
+
 
 class DownloadingWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -13,41 +15,35 @@ class DownloadingWidget(QtWidgets.QWidget):
         # create headline label
         headline_label = QtWidgets.QLabel("Downloading")
 
-        def add_account():
-            self.account_window = AccountSettingsWidget()
-            self.account_window.show()
-
-        def add_session():
-            self.account_window = SessionSettingsWidget()
-            self.account_window.show()
-
         # create list widgets and buttons
-        list_widget1 = QtWidgets.QListWidget()
-        list_widget2 = QtWidgets.QListWidget()
+        self.list_widget_account = QtWidgets.QListWidget()
+        self.list_widget_session = QtWidgets.QListWidget()
         button1 = QtWidgets.QPushButton("Add Account")
-        button1.clicked.connect(add_account)
+        button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
-        button2.clicked.connect(add_session)
+        button2.clicked.connect(self.add_session_click)
 
-        # add checkboxes to list widgets
-        for i in range(3):
-            item1 = QtWidgets.QListWidgetItem()
-            item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item1.setCheckState(QtCore.Qt.Unchecked)
-            list_widget1.addItem(item1)
+        self.load_accounts()
 
-            item2 = QtWidgets.QListWidgetItem()
-            item2.setFlags(item2.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item2.setCheckState(QtCore.Qt.Unchecked)
-            list_widget2.addItem(item2)
+        # # add checkboxes to list widgets
+        # for i in range(3):
+        #     item1 = QtWidgets.QListWidgetItem()
+        #     item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
+        #     item1.setCheckState(QtCore.Qt.Unchecked)
+        #     list_widget_account.addItem(item1)
+        #
+        #     item2 = QtWidgets.QListWidgetItem()
+        #     item2.setFlags(item2.flags() | QtCore.Qt.ItemIsUserCheckable)
+        #     item2.setCheckState(QtCore.Qt.Unchecked)
+        #     list_widget_session.addItem(item2)
 
         # create horizontal layouts
         layout1 = QtWidgets.QHBoxLayout()
-        layout1.addWidget(list_widget1)
+        layout1.addWidget(self.list_widget_account)
         layout1.addWidget(button1)
 
         layout2 = QtWidgets.QHBoxLayout()
-        layout2.addWidget(list_widget2)
+        layout2.addWidget(self.list_widget_session)
         layout2.addWidget(button2)
 
         # create start downloading button
@@ -62,3 +58,22 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         # set main layout
         self.setLayout(main_layout)
+
+    def add_account_click(self):
+        self.account_window = AccountSettingsWidget(self)
+        self.account_window.show()
+
+    def add_session_click(self):
+        self.account_window = SessionSettingsWidget()
+        self.account_window.show()
+
+    def load_accounts(self):
+        account_list = config_tool.load_accounts()
+        self.list_widget_account.clear()
+        # add checkboxes to list widgets
+        for account in account_list:
+            item1 = QtWidgets.QListWidgetItem()
+            item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item1.setCheckState(QtCore.Qt.Unchecked)
+            item1.setText(account['account'])
+            self.list_widget_account.addItem(item1)
