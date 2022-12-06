@@ -29,18 +29,18 @@ class SidebarWidget(QtWidgets.QWidget):
             self.main_content_widget.set_widget(self.visualization_widget)
 
         # Create three buttons and add them to the sidebar button layout
-        self.button1 = QtWidgets.QPushButton("Downloading")
-        self.button1.clicked.connect(to_downloading)
-        self.sidebar_button_layout.addWidget(self.button1)
-        self.button2 = QtWidgets.QPushButton("Visualization")
-        self.button2.clicked.connect(to_visualization)
-        self.sidebar_button_layout.addWidget(self.button2)
-        self.button3 = QtWidgets.QPushButton("Button 3")
-        self.sidebar_button_layout.addWidget(self.button3)
+        self.button_downloading = QtWidgets.QPushButton("Downloading")
+        self.button_downloading.clicked.connect(to_downloading)
+        self.sidebar_button_layout.addWidget(self.button_downloading)
+        self.button_visualization = QtWidgets.QPushButton("Visualization")
+        self.button_visualization.clicked.connect(to_visualization)
+        self.sidebar_button_layout.addWidget(self.button_visualization)
+        self.button_labeling = QtWidgets.QPushButton("Labeling")
+        self.sidebar_button_layout.addWidget(self.button_labeling)
 
         # Add some styling to the buttons
-        self.button1.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
-        self.button2.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
-        self.button3.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
+        self.button_downloading.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
+        self.button_visualization.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
+        self.button_labeling.setStyleSheet("background-color: #7acfff; color: white; font-size: 14pt; padding: 10px")
 
 
