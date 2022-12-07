@@ -18,12 +18,10 @@ class DownloadingWidget(QtWidgets.QWidget):
         headline_label = QtWidgets.QLabel("Downloading")
 
         # create list widgets and buttons
-        self.list_widget_account = QtWidgets.QListWidget()
-        self.list_widget_account.setToolTip('Double click to modify')
-        self.list_widget_account.itemDoubleClicked.connect(self.modify_account_click)
-        self.list_widget_session = QtWidgets.QListWidget()
-        self.list_widget_session.setToolTip('Double click to modify')
-        self.list_widget_session.itemDoubleClicked.connect(self.modify_session_click)
+        self.list_widget_account = AccountSessionQListWidget(self.modify_account_click, self.delete_account)
+
+        self.list_widget_session = AccountSessionQListWidget(self.modify_session_click, self.delete_session)
+
         button1 = QtWidgets.QPushButton("Add Account")
         button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
@@ -88,6 +86,14 @@ class DownloadingWidget(QtWidgets.QWidget):
     def modify_session_click(self, item):
         self.session_window = SessionSettingsWidget(self, item)
         self.session_window.show()
+
+    def delete_account(self, account_str):
+        config_tool.delete_account(account_str)
+        self.load_accounts()
+
+    def delete_session(self, session_name):
+        config_tool.delete_session(session_name)
+        self.load_sessions()
 
     def load_accounts(self):
         account_list = config_tool.load_accounts()
@@ -193,3 +199,41 @@ class MyWorker(QtCore.QObject):
             os.system(cmd)
             self.update_progress.emit(i + 1)
         self.finished.emit()
+
+
+class AccountSessionQListWidget(QListWidget):
+    def __init__(self, modify_click, delete_click):
+        super().__init__()
+
+        self.setToolTip('Double click to modify')
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_right_click_list_widget)
+        self.itemDoubleClicked.connect(modify_click)
+        self.delete_function = delete_click
+
+    def on_right_click_list_widget(self, pos):
+        # Get the index of the item that was right-clicked
+        index = self.indexAt(pos)
+
+        if not index.isValid():  # Check if a valid item was right-clicked
+            return
+
+        item = self.itemFromIndex(index)  # Get the item
+        text = item.text()  # Get the text of the item
+
+        # Create a context menu with two options
+        menu = QtWidgets.QMenu()
+        option1 = menu.addAction("Delete")
+
+        # Show the context menu
+        action = menu.exec_(self.viewport().mapToGlobal(pos))
+
+        if action == option1:  # If the user selected option 1
+            print("Selected for item:", text)
+            result = QMessageBox.question(None, "Confirmation", "Are you sure to delete {} ?".format(text),
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            # Check the result of the dialog and act accordingly.
+            if result == QMessageBox.Yes:
+                self.delete_function(text)
+
