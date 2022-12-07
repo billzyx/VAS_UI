@@ -107,8 +107,8 @@ class SessionSettingsWidget(QWidget):
 
         config_tool.save_session(
             session_name=self.session_name_textbox.text(),
-            date_from=self.date_from_box.date().toPyDate().strftime("%d/%m/%Y"),
-            date_to=self.date_to_box.date().toPyDate().strftime("%d/%m/%Y"),
+            date_from=self.date_from_box.date().toPyDate().strftime("%m/%d/%Y"),
+            date_to=self.date_to_box.date().toPyDate().strftime("%m/%d/%Y"),
             time_from=self.date_from_box.time().toPyTime().strftime("%H:%M"),
             time_to=self.date_to_box.time().toPyTime().strftime("%H:%M"),
             save_date_time=self.save_date_time_checkbox.isChecked(),
@@ -120,8 +120,8 @@ class SessionSettingsWidget(QWidget):
     def load_session(self):
         session_dict = config_tool.load_session(self.session)
         self.session_name_textbox.setText(session_dict['session_name'])
-        self.date_from_box.setDate(datetime.strptime(session_dict['date_from'], "%d/%m/%Y").date())
-        self.date_to_box.setDate(datetime.strptime(session_dict['date_to'], "%d/%m/%Y").date())
+        self.date_from_box.setDate(datetime.strptime(session_dict['date_from'], "%m/%d/%Y").date())
+        self.date_to_box.setDate(datetime.strptime(session_dict['date_to'], "%m/%d/%Y").date())
         self.date_from_box.setTime(datetime.strptime(session_dict['time_from'], "%H:%M").time())
         self.date_to_box.setTime(datetime.strptime(session_dict['time_to'], "%H:%M").time())
         self.save_date_time_checkbox.setChecked(session_dict['save_date_time'])
