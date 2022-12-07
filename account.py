@@ -8,10 +8,11 @@ import config_tool
 
 
 class AccountSettingsWidget(QWidget):
-    def __init__(self, downloading_widget=None):
+    def __init__(self, downloading_widget=None, list_widget_item=None):
         super().__init__()
 
         self.downloading_widget = downloading_widget
+        self.list_widget_item = list_widget_item
 
         self.setWindowTitle("Account Settings")
 
@@ -67,6 +68,10 @@ class AccountSettingsWidget(QWidget):
         # set main layout
         self.setLayout(main_layout)
 
+        if self.list_widget_item:
+            self.account = self.list_widget_item.text()
+            self.load_account()
+
     def save_click(self):
         if not self.username_textbox.text():
             self.msg_box = QMessageBox()
@@ -74,6 +79,7 @@ class AccountSettingsWidget(QWidget):
             self.msg_box.setText("Username is empty. Please put your username!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
             self.msg_box.show()
+            return
 
         elif not self.password_textbox.text():
             self.msg_box = QMessageBox()
@@ -81,27 +87,38 @@ class AccountSettingsWidget(QWidget):
             self.msg_box.setText("Password is empty. Please put your password!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
             self.msg_box.show()
+            return
 
-        elif config_tool.check_account_exist(self.username_textbox.text()):
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Username existed. Try modify the existing one at Downloading page.")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            self.msg_box.show()
+        if not self.list_widget_item:
+            if config_tool.check_account_exist(self.username_textbox.text()):
+                self.msg_box = QMessageBox()
+                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setText("Username existed. Try modify the existing one at the Downloading page.")
+                self.msg_box.setStandardButtons(QMessageBox.Ok)
+                self.msg_box.show()
+                return
 
-        else:
-            config_tool.save_account(
-                account=self.username_textbox.text(),
-                password=self.password_textbox.text(),
-                save_dir=self.save_dir_textbox.text(),
-                device=self.select_devices_list.currentText()
-            )
-            self.close()
-            self.downloading_widget.load_accounts()
+        if self.list_widget_item:
+            config_tool.delete_account(self.account)
+
+        config_tool.save_account(
+            account=self.username_textbox.text(),
+            password=self.password_textbox.text(),
+            save_dir=self.save_dir_textbox.text(),
+            device=self.select_devices_list.currentText()
+        )
+        self.close()
+        self.downloading_widget.load_accounts()
 
     def select_dir_click(self):
         folder_path = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder')
         self.save_dir_textbox.setText(folder_path)
+
+    def load_account(self):
+        account_dict = config_tool.load_account(self.account)
+        self.username_textbox.setText(account_dict['account'])
+        self.password_textbox.setText(account_dict['password'])
+        self.save_dir_textbox.setText(account_dict['save_dir'])
 
 
 if __name__ == "__main__":

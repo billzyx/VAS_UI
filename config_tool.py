@@ -24,7 +24,8 @@ def save_account(account, password, save_dir, device):
         'account': account,
         'password': password,
         'save_dir': save_dir,
-        'profile': account_to_profile(account)
+        'profile': account_to_profile(account),
+        'device': None
     }
 
     if not device == 'All':
@@ -37,6 +38,18 @@ def check_account_exist(account):
     if os.path.isfile(get_account_path(account)):
         return True
     return False
+
+
+def load_account(account):
+    if not check_account_exist(account):
+        return None
+    with open(get_account_path(account), 'r') as f:
+        return yaml.safe_load(f)
+
+
+def delete_account(account):
+    if os.path.exists(get_account_path(account)):
+        os.remove(get_account_path(account))
 
 
 def load_accounts():

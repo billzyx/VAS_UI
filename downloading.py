@@ -17,6 +17,8 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         # create list widgets and buttons
         self.list_widget_account = QtWidgets.QListWidget()
+        self.list_widget_account.setToolTip('Double click to modify')
+        self.list_widget_account.itemDoubleClicked.connect(self.modify_account_click)
         self.list_widget_session = QtWidgets.QListWidget()
         button1 = QtWidgets.QPushButton("Add Account")
         button1.clicked.connect(self.add_account_click)
@@ -61,6 +63,10 @@ class DownloadingWidget(QtWidgets.QWidget):
 
     def add_account_click(self):
         self.account_window = AccountSettingsWidget(self)
+        self.account_window.show()
+
+    def modify_account_click(self, item):
+        self.account_window = AccountSettingsWidget(self, item)
         self.account_window.show()
 
     def add_session_click(self):
