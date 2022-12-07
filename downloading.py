@@ -1,6 +1,8 @@
+import os
+from time import sleep
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import Qt, QThread, QObject, pyqtSignal
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox
 
 from account import AccountSettingsWidget
 from session import SessionSettingsWidget
@@ -51,15 +53,22 @@ class DownloadingWidget(QtWidgets.QWidget):
         layout2.addWidget(self.list_widget_session)
         layout2.addWidget(button2)
 
+        self.progress_bar = QtWidgets.QProgressBar()
+
         # create start downloading button
-        start_button = QtWidgets.QPushButton("Start downloading")
+        self.start_button = QtWidgets.QPushButton("Start downloading")
+        self.start_button.clicked.connect(self.start_downloading_click)
+
+        self.download_status = QtWidgets.QLabel("")
 
         # create main layout
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addWidget(headline_label)
         main_layout.addLayout(layout1)
         main_layout.addLayout(layout2)
-        main_layout.addWidget(start_button)
+        main_layout.addWidget(self.progress_bar)
+        main_layout.addWidget(self.start_button)
+        main_layout.addWidget(self.download_status)
 
         # set main layout
         self.setLayout(main_layout)
@@ -101,3 +110,84 @@ class DownloadingWidget(QtWidgets.QWidget):
             item1.setCheckState(QtCore.Qt.Unchecked)
             item1.setText(session['session_name'])
             self.list_widget_session.addItem(item1)
+
+    def start_downloading_click(self):
+        account_list = []
+        for item in self.list_widget_account.selectedItems():
+            account_list.append(config_tool.load_account(item.text()))
+
+        session_list = []
+        for item in self.list_widget_session.selectedItems():
+            session_list.append(config_tool.load_session(item.text()))
+
+        print(account_list)
+        print(session_list)
+
+        if not account_list:
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setText("You need select at least one account to download!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
+            return
+
+        if not session_list:
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setText("You need select at least one session to download!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
+            return
+
+        config_file_path_list = config_tool.generate_download_configs(account_list, session_list)
+
+        if config_tool.check_downloading_exist(config_file_path_list):
+            self.start_download(config_file_path_list)
+        else:
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setText("One of the session already downloaded. If you need re-download,"
+                                 " please delete the corresponding fonder under your Save Directory")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
+            return
+
+    def start_download(self, config_file_path_list):
+        self.start_button.setEnabled(False)  # Disable the start button
+        self.worker = MyWorker(config_file_path_list)  # Create the worker
+        # Connect the signal from the worker to the progress bar
+        self.worker.update_progress.connect(self.progress_bar.setValue)
+        # Connect the finished signal to a slot
+        self.worker.finished.connect(self.on_finished)
+        self.progress_bar.setRange(0, len(config_file_path_list))
+
+        self.thread = QtCore.QThread()  # Create a new thread
+        self.worker.moveToThread(self.thread)  # Move the worker to the new thread
+        self.thread.started.connect(self.worker.run)  # Start the worker when the thread starts
+        self.thread.start()  # Start the thread
+
+    @QtCore.pyqtSlot()
+    def on_finished(self):
+        self.start_button.setEnabled(True)  # Enable the start button
+        self.download_status.setText("Downloading finished")  # Change the text of the button
+
+
+class MyWorker(QtCore.QObject):
+    # Signal that will be emitted during the process
+    update_progress = QtCore.pyqtSignal(int)
+    finished = QtCore.pyqtSignal()
+
+    def __init__(self, config_file_path_list):
+        super().__init__(None)
+        self.config_file_path_list = config_file_path_list
+
+    @QtCore.pyqtSlot()
+    def run(self):
+        # This is the code that will run in the new thread
+        for i, config_file_path in enumerate(self.config_file_path_list):
+            if i > 0:
+                sleep(10)
+            cmd = 'python3 vas-toolkit/alexa.py --config_file_path {}'.format(config_file_path)
+            os.system(cmd)
+            self.update_progress.emit(i + 1)
+        self.finished.emit()

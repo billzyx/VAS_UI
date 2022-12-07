@@ -1,2 +1,6 @@
 .idea
 *.yaml
+NUL
+profiles
+*.log
+vas_save

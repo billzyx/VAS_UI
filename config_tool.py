@@ -2,10 +2,12 @@ import re
 import os
 import yaml
 from glob import glob
+from datetime import datetime
 
 config_path = 'config'
 account_save_path = os.path.join(config_path, 'accounts')
 session_save_path = os.path.join(config_path, 'sessions')
+download_save_path = os.path.join(config_path, 'downloads')
 
 os.makedirs(account_save_path, exist_ok=True)
 os.makedirs(session_save_path, exist_ok=True)
@@ -105,6 +107,36 @@ def load_sessions():
         with open(session_path, 'r') as f:
             session_list.append(yaml.safe_load(f))
     return session_list
+
+
+def generate_download_configs(account_list, session_list):
+    download_save_path_current = os.path.join(
+        download_save_path, str(datetime.now()).replace(':', '-').replace(' ', '-').replace('.', '-'))
+    os.makedirs(download_save_path_current)
+    config_file_path_list = []
+    for account in account_list:
+        for session in session_list:
+            session = session.copy()
+            profile = account['profile']
+            session_name = session['session_name']
+            file_name = '{}-{}'.format(profile, session_name)
+            session['session_name'] = '{}_{}'.format(profile, session_name)
+            session.update(account)
+            config_file = os.path.join(download_save_path_current, '{}.yaml'.format(file_name))
+            config_file_path_list.append(config_file)
+            with open(config_file, 'w', encoding='utf-8') as f:
+                yaml.dump(session, f)
+    return config_file_path_list
+
+
+def check_downloading_exist(config_file_path_list):
+    for config_file_path in config_file_path_list:
+        with open(config_file_path, 'r') as f:
+            config = yaml.safe_load(f)
+            if os.path.isdir(os.path.join(config['save_dir'], config['session_name'])):
+                return False
+    return True
+
 
 
 if __name__ == '__main__':
