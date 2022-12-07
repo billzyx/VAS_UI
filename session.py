@@ -97,7 +97,7 @@ class SessionSettingsWidget(QWidget):
         if self.date_from_box.dateTime() > self.date_to_box.dateTime():
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("You Date to is early than Date from. Try a earlier Date from!")
+            self.msg_box.setText("You Date to is earlier than Date from. Try a earlier Date from!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
             self.msg_box.show()
             return
