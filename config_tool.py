@@ -62,6 +62,52 @@ def load_accounts():
     return account_list
 
 
+def get_session_path(session_name):
+    return os.path.join(session_save_path, '{}.yaml'.format(session_name))
+
+
+def save_session(session_name, date_from, date_to, time_from, time_to, save_date_time, save_device_name):
+    session_dict = {
+        "session_name": session_name,
+        "reverse": True,
+        "date_from": date_from,
+        "date_to": date_to,
+        "time_from": time_from,
+        "time_to": time_to,
+        'save_date_time': save_date_time,
+        'save_device_name': save_device_name,
+    }
+    with open(get_session_path(session_name), 'w') as f:
+        yaml.dump(session_dict, f)
+
+
+def check_session_exist(session):
+    if os.path.isfile(get_session_path(session)):
+        return True
+    return False
+
+def load_session(session):
+    if not check_session_exist(session):
+        return None
+    with open(get_session_path(session), 'r') as f:
+        return yaml.safe_load(f)
+
+
+def delete_session(session):
+    if os.path.exists(get_session_path(session)):
+        os.remove(get_session_path(session))
+
+
+def load_sessions():
+    session_path_list = glob(os.path.join(session_save_path, '*.yaml'))
+    session_list = []
+    for session_path in session_path_list:
+        with open(session_path, 'r') as f:
+            session_list.append(yaml.safe_load(f))
+    return session_list
+
+
 if __name__ == '__main__':
     print(load_accounts())
+    print(load_sessions())
 

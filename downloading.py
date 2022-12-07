@@ -20,12 +20,15 @@ class DownloadingWidget(QtWidgets.QWidget):
         self.list_widget_account.setToolTip('Double click to modify')
         self.list_widget_account.itemDoubleClicked.connect(self.modify_account_click)
         self.list_widget_session = QtWidgets.QListWidget()
+        self.list_widget_session.setToolTip('Double click to modify')
+        self.list_widget_session.itemDoubleClicked.connect(self.modify_session_click)
         button1 = QtWidgets.QPushButton("Add Account")
         button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
         button2.clicked.connect(self.add_session_click)
 
         self.load_accounts()
+        self.load_sessions()
 
         # # add checkboxes to list widgets
         # for i in range(3):
@@ -70,8 +73,12 @@ class DownloadingWidget(QtWidgets.QWidget):
         self.account_window.show()
 
     def add_session_click(self):
-        self.account_window = SessionSettingsWidget()
-        self.account_window.show()
+        self.session_window = SessionSettingsWidget(self)
+        self.session_window.show()
+
+    def modify_session_click(self, item):
+        self.session_window = SessionSettingsWidget(self, item)
+        self.session_window.show()
 
     def load_accounts(self):
         account_list = config_tool.load_accounts()
@@ -83,3 +90,14 @@ class DownloadingWidget(QtWidgets.QWidget):
             item1.setCheckState(QtCore.Qt.Unchecked)
             item1.setText(account['account'])
             self.list_widget_account.addItem(item1)
+
+    def load_sessions(self):
+        session_list = config_tool.load_sessions()
+        self.list_widget_session.clear()
+        # add checkboxes to list widgets
+        for session in session_list:
+            item1 = QtWidgets.QListWidgetItem()
+            item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item1.setCheckState(QtCore.Qt.Unchecked)
+            item1.setText(session['session_name'])
+            self.list_widget_session.addItem(item1)
