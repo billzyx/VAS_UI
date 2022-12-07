@@ -105,7 +105,8 @@ class AccountSettingsWidget(QWidget):
             account=self.username_textbox.text(),
             password=self.password_textbox.text(),
             save_dir=self.save_dir_textbox.text(),
-            device=self.select_devices_list.currentText()
+            device=self.select_devices_list.currentText(),
+            device_list=[self.select_devices_list.itemText(i) for i in range(1, self.select_devices_list.count())]
         )
         self.close()
         self.downloading_widget.load_accounts()
@@ -119,6 +120,10 @@ class AccountSettingsWidget(QWidget):
         self.username_textbox.setText(account_dict['account'])
         self.password_textbox.setText(account_dict['password'])
         self.save_dir_textbox.setText(account_dict['save_dir'])
+        for device in account_dict['device_list']:
+            self.select_devices_list.addItem(device)
+        if account_dict['device']:
+            self.select_devices_list.setCurrentText(account_dict['device'])
 
 
 if __name__ == "__main__":

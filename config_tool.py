@@ -19,13 +19,14 @@ def get_account_path(account):
     return os.path.join(account_save_path, '{}.yaml'.format(account_to_profile(account)))
 
 
-def save_account(account, password, save_dir, device):
+def save_account(account, password, save_dir, device, device_list):
     account_dict = {
         'account': account,
         'password': password,
         'save_dir': save_dir,
         'profile': account_to_profile(account),
-        'device': None
+        'device': None,
+        'device_list': device_list,
     }
 
     if not device == 'All':
