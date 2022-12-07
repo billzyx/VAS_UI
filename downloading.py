@@ -113,12 +113,14 @@ class DownloadingWidget(QtWidgets.QWidget):
 
     def start_downloading_click(self):
         account_list = []
-        for item in self.list_widget_account.selectedItems():
-            account_list.append(config_tool.load_account(item.text()))
+        for index in range(self.list_widget_account.count()):
+            if self.list_widget_account.item(index).checkState() == Qt.Checked:
+                account_list.append(config_tool.load_account(self.list_widget_account.item(index).text()))
 
         session_list = []
-        for item in self.list_widget_session.selectedItems():
-            session_list.append(config_tool.load_session(item.text()))
+        for index in range(self.list_widget_session.count()):
+            if self.list_widget_session.item(index).checkState() == Qt.Checked:
+                session_list.append(config_tool.load_session(self.list_widget_session.item(index).text()))
 
         print(account_list)
         print(session_list)
