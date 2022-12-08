@@ -150,6 +150,8 @@ class VisualizationTab(QtWidgets.QWidget):
         self.play(item.row())
 
     def play(self, audio_idx=0, play_single_command=False):
+        if play_single_command:
+            self.play_button.setText('Play')
         try:
             if self.table_widget.file_path.endswith('.txt'):
                 self.play_txt(audio_idx, play_single_command)
