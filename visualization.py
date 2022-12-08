@@ -107,7 +107,7 @@ class VisualizationTab(QtWidgets.QWidget):
             self, caption='Select .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
         print(file_path[0])
         try:
-            self.table_widget = TableWidget(file_path[0])
+            self.table_widget = TableWidget(file_path[0], self)
             self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
         except:
             self.msg_box = QMessageBox()
@@ -144,12 +144,12 @@ class VisualizationTab(QtWidgets.QWidget):
     def table_item_double_click_play(self, item):
         self.play(item.row())
 
-    def play(self, audio_idx=0):
+    def play(self, audio_idx=0, play_single_command=False):
         try:
             if self.table_widget.file_path.endswith('.txt'):
-                self.play_txt(audio_idx)
+                self.play_txt(audio_idx, play_single_command)
             elif self.table_widget.file_path.endswith('.cha'):
-                self.play_cha(audio_idx)
+                self.play_cha(audio_idx, play_single_command)
         except FileNotFoundError:
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
@@ -180,6 +180,15 @@ class VisualizationTab(QtWidgets.QWidget):
             self.player.pause()
             self.play_next()
 
+    def on_position_changed_single(self, position):
+        # This callback will be called at regular intervals
+        # during the playback of the audio file. The position
+        # parameter indicates the current position of the
+        # media player in milliseconds.
+        end_time = int(self.audio_list[self.current_audio][1])
+        if position >= end_time:
+            self.player.pause()
+
     def play_next(self):
         if self.current_audio >= 0:
             self.table_widget.cancel_highlight(self.current_audio)
@@ -203,7 +212,7 @@ class VisualizationTab(QtWidgets.QWidget):
         # Play the next audio file
         self.player.play()
 
-    def play_txt(self, audio_idx=0):
+    def play_txt(self, audio_idx=0, play_single_command=False):
         self.audio_list = []
         self.current_audio = audio_idx - 1
         self.player = QMediaPlayer()
@@ -215,11 +224,16 @@ class VisualizationTab(QtWidgets.QWidget):
                 self.audio_list.append(audio_path)
             else:
                 self.audio_list.append(None)
+        if play_single_command:
+            self.current_audio += 1
+            self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_list[self.current_audio])))
+            self.player.play()
+            return
         self.player.mediaStatusChanged.connect(self.on_media_status_changed)
         self.play_button.setText("Pause")
         self.play_next()
 
-    def play_cha(self, audio_idx=0):
+    def play_cha(self, audio_idx=0, play_single_command=False):
         self.audio_list = []
         self.current_audio = audio_idx - 1
         self.player = QMediaPlayer()
@@ -232,14 +246,23 @@ class VisualizationTab(QtWidgets.QWidget):
         if not os.path.isfile(audio_file_path):
             raise FileNotFoundError
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(audio_file_path)))
-        self.player.positionChanged.connect(self.on_position_changed)
         self.player.setNotifyInterval(10)
+
+        if play_single_command:
+            self.current_audio += 1
+            self.player.positionChanged.connect(self.on_position_changed_single)
+            start_time = int(self.audio_list[self.current_audio][0])
+            self.player.setPosition(start_time)
+            self.player.play()
+            return
+
+        self.player.positionChanged.connect(self.on_position_changed)
         self.play_button.setText("Pause")
         self.play_next()
 
 
 class TableWidget(QtWidgets.QWidget):
-    def __init__(self, file_path):
+    def __init__(self, file_path, visualization_tab):
         super().__init__()
         self.setWindowTitle("Table Widget")
 
@@ -248,6 +271,7 @@ class TableWidget(QtWidgets.QWidget):
 
         self.load_file(file_path)
         self.file_path = file_path
+        self.visualization_tab = visualization_tab
 
         # self.table.resizeColumnsToContents()
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -281,9 +305,12 @@ class TableWidget(QtWidgets.QWidget):
             self.table.setItem(row, 1, QTableWidgetItem(text_list[row]))
 
             self.table.resizeRowToContents(row)
-            play_btn = QPushButton('Play')
-            play_btn.setFixedSize(50, 30)
-            self.table.setCellWidget(row, 2, play_btn)
+            if audio_list[row]:
+                play_btn = QPushButton('Play')
+                play_btn.setFixedSize(50, 30)
+                play_btn.clicked.connect(
+                    lambda _, x=row: self.visualization_tab.play(x, True))
+                self.table.setCellWidget(row, 2, play_btn)
 
     def set_highlight(self, row):
         row_item = self.table.item(row, 0)
