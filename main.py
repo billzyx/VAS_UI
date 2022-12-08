@@ -10,7 +10,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         # Set window properties
         self.setWindowTitle("My UI")
-        self.setMinimumSize(600, 400)
+        self.setMinimumSize(1000, 600)
 
         # Create a widget for the main content area
         self.main_widget = QtWidgets.QWidget()

@@ -1,6 +1,9 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, \
+    QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView
+
+import transctipt_tools
 
 
 class VisualizationWidget(QtWidgets.QWidget):
@@ -91,42 +94,66 @@ class VisualizationTab(QtWidgets.QWidget):
         self.setLayout(self.main_layout)
 
     def open_action(self):
+        file_path = QtWidgets.QFileDialog.getOpenFileName(
+            self, caption='Select .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
+        print(file_path[0])
+        try:
+            self.tabel_widget = TableWidget(file_path[0])
+        except:
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
+            return
         while self.content_layout.count():
             item = self.content_layout.takeAt(0)
             if item.widget() is not None:
                 item.widget().deleteLater()
             elif item.layout() is not None:
                 item.layout().deleteLater()
-        self.content_layout.addWidget(TableWidget())
+        self.content_layout.addWidget(self.tabel_widget)
 
 
 class TableWidget(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, file_path):
         super().__init__()
         self.setWindowTitle("Table Widget")
 
-        # create main horizontal layout
-        main_layout = QtWidgets.QHBoxLayout()
+        self.table = QTableWidget()
 
-        # create table
-        table = QtWidgets.QTableWidget()
-        table.setColumnCount(2)
-        table.setRowCount(2)
-        table.setHorizontalHeaderLabels(["User", "VAS"])
-        table.setVerticalHeaderLabels(["User", "VAS"])
+        self.load_file(file_path)
 
-        # add play buttons to table
-        play_button1 = QtWidgets.QPushButton("Play")
-        play_button2 = QtWidgets.QPushButton("Play")
-        table.setCellWidget(0, 1, play_button1)
-        table.setCellWidget(1, 1, play_button2)
+        # self.table.resizeColumnsToContents()
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        # add table to main layout and add scrollbar
-        main_layout.addWidget(table)
-        scrollbar = QtWidgets.QScrollBar()
-        main_layout.addWidget(scrollbar)
+        self.table.horizontalHeader().setStretchLastSection(True)
 
-        # set main layout
-        self.setLayout(main_layout)
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.table)
+        self.setLayout(self.layout)
 
+    def load_file(self, file_path):
+        assert file_path.endswith('.cha') or file_path.endswith('.txt')
 
+        if file_path.endswith('.cha'):
+            speaker_list, text_list, audio_list = transctipt_tools.load_cha_file(file_path)
+        elif file_path.endswith('.txt'):
+            speaker_list, text_list, audio_list = transctipt_tools.load_txt_file(file_path)
+
+        self.table.setRowCount(len(speaker_list))
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
+
+        self.table.setColumnWidth(0, 100)
+        self.table.setColumnWidth(1, 400)
+        self.table.setColumnWidth(2, 100)
+
+        for row in range(len(speaker_list)):
+            self.table.setItem(row, 0, QTableWidgetItem(speaker_list[row]))
+            self.table.setItem(row, 1, QTableWidgetItem(text_list[row]))
+
+            self.table.resizeRowToContents(row)
+            play_btn = QPushButton('Play')
+            play_btn.setFixedSize(50, 30)
+            self.table.setCellWidget(row, 2, play_btn)
