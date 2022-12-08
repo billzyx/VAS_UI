@@ -212,7 +212,7 @@ class VisualizationTab(QtWidgets.QWidget):
 
     def play_cha(self):
         self.audio_list = []
-        self.current_audio = 0
+        self.current_audio = -1
         self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
