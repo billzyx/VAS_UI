@@ -112,7 +112,8 @@ class VisualizationTab(QtWidgets.QWidget):
             self.table_widget = TableWidget(file_path[0], self)
             self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
             self.visualization_widget.tabs.setTabText(
-                self.visualization_widget.tabs.indexOf(self), os.path.basename(file_path[0]))
+                self.visualization_widget.tabs.indexOf(self),
+                '{}/{}'.format(os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])))
         except FileNotFoundError:
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
