@@ -133,15 +133,7 @@ class VisualizationTab(QtWidgets.QWidget):
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
                 self.msg_box.show()
                 return
-            # try:
             self.play()
-            # except:
-            #     self.msg_box = QMessageBox()
-            #     self.msg_box.setIcon(QMessageBox.Warning)
-            #     self.msg_box.setText("Cannot find audio file!")
-            #     self.msg_box.setStandardButtons(QMessageBox.Ok)
-            #     self.msg_box.show()
-            #     return
         elif self.play_button.text() == 'Pause':
             self.player.pause()
             self.play_button.setText('Continue Play')
@@ -153,10 +145,18 @@ class VisualizationTab(QtWidgets.QWidget):
         self.play(item.row())
 
     def play(self, audio_idx=0):
-        if self.table_widget.file_path.endswith('.txt'):
-            self.play_txt(audio_idx)
-        elif self.table_widget.file_path.endswith('.cha'):
-            self.play_cha(audio_idx)
+        try:
+            if self.table_widget.file_path.endswith('.txt'):
+                self.play_txt(audio_idx)
+            elif self.table_widget.file_path.endswith('.cha'):
+                self.play_cha(audio_idx)
+        except FileNotFoundError:
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setText("Cannot find the audio file!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
+            return
 
     def stop_click(self):
         if self.table_widget:
@@ -210,6 +210,8 @@ class VisualizationTab(QtWidgets.QWidget):
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
                 audio_path = os.path.join(os.path.dirname(self.table_widget.file_path), 'audio', audio)
+                if not os.path.isfile(audio_path):
+                    raise FileNotFoundError
                 self.audio_list.append(audio_path)
             else:
                 self.audio_list.append(None)
@@ -226,7 +228,10 @@ class VisualizationTab(QtWidgets.QWidget):
                 self.audio_list.append(audio.split('_'))
             else:
                 self.audio_list.append(None)
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.table_widget.file_path.replace('.cha', '.wav'))))
+        audio_file_path = self.table_widget.file_path.replace('.cha', '.wav')
+        if not os.path.isfile(audio_file_path):
+            raise FileNotFoundError
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(audio_file_path)))
         self.player.positionChanged.connect(self.on_position_changed)
         self.player.setNotifyInterval(10)
         self.play_button.setText("Pause")
