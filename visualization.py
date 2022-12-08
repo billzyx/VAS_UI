@@ -41,7 +41,7 @@ class VisualizationWidget(QtWidgets.QWidget):
         # Add a few tabs
         for i in range(1):
             self.tabs_count = 0
-            self.tabs.addTab(VisualizationTab(), "Tab {}".format(i))
+            self.tabs.addTab(VisualizationTab(self), "Tab {}".format(i))
 
     def close_tab(self, index):
         # Get the widget for the tab
@@ -54,12 +54,14 @@ class VisualizationWidget(QtWidgets.QWidget):
     def add_tab(self):
         # Add a new tab with a default name
         self.tabs_count += 1
-        self.tabs.addTab(VisualizationTab(), "Tab {}".format(self.tabs_count))
+        self.tabs.addTab(VisualizationTab(self), "Tab {}".format(self.tabs_count))
 
 
 class VisualizationTab(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, visualization_widget):
         super().__init__()
+
+        self.visualization_widget = visualization_widget
 
         # create main horizontal layout
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -109,7 +111,9 @@ class VisualizationTab(QtWidgets.QWidget):
         try:
             self.table_widget = TableWidget(file_path[0], self)
             self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
-        except:
+            self.visualization_widget.tabs.setTabText(
+                self.visualization_widget.tabs.indexOf(self), os.path.basename(file_path[0]))
+        except FileNotFoundError:
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
@@ -283,7 +287,8 @@ class TableWidget(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def load_file(self, file_path):
-        assert file_path.endswith('.cha') or file_path.endswith('.txt')
+        if not (file_path.endswith('.cha') or file_path.endswith('.txt') or os.path.isfile(file_path)):
+            raise FileNotFoundError
 
         if file_path.endswith('.cha'):
             speaker_list, text_list, audio_list = transctipt_tools.load_cha_file(file_path)
