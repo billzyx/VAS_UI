@@ -15,23 +15,27 @@ class AccountSettingsWidget(QWidget):
         self.list_widget_item = list_widget_item
 
         self.setWindowTitle("Account Settings")
+        self.setMinimumSize(852, 1190)
 
         # create main vertical layout
         main_layout = QtWidgets.QVBoxLayout()
 
         # create headline
         headline = QtWidgets.QLabel("Account Settings")
+        headline.setObjectName("headline")
         main_layout.addWidget(headline)
 
         # create username header and textbox
         username_header = QtWidgets.QLabel("Username")
         self.username_textbox = QtWidgets.QLineEdit()
+        self.username_textbox.setPlaceholderText("Userame");
         main_layout.addWidget(username_header)
         main_layout.addWidget(self.username_textbox)
 
         # create password header and textbox
         password_header = QtWidgets.QLabel("Password")
         self.password_textbox = QtWidgets.QLineEdit()
+        self.password_textbox.setPlaceholderText("Password");
         main_layout.addWidget(password_header)
         main_layout.addWidget(self.password_textbox)
 
@@ -40,7 +44,7 @@ class AccountSettingsWidget(QWidget):
         save_dir_header = QtWidgets.QLabel("Save Directory")
         self.save_dir_textbox = QtWidgets.QLineEdit()
         self.save_dir_textbox.setText('vas_save')
-        save_dir_layout.addWidget(save_dir_header)
+        main_layout.addWidget(save_dir_header)
         save_dir_layout.addWidget(self.save_dir_textbox)
         select_dir_button = QtWidgets.QPushButton("Select Path")
         select_dir_button.clicked.connect(self.select_dir_click)
@@ -53,7 +57,7 @@ class AccountSettingsWidget(QWidget):
         select_devices_header = QtWidgets.QLabel("Select Devices")
         self.select_devices_list = QtWidgets.QComboBox()
         self.select_devices_list.addItem('All')
-        devices_layout.addWidget(select_devices_header)
+        main_layout.addWidget(select_devices_header)
         devices_layout.addWidget(self.select_devices_list)
         # create update devices button
         update_devices_button = QtWidgets.QPushButton("Update Devices")
@@ -62,6 +66,7 @@ class AccountSettingsWidget(QWidget):
 
         # create save account settings button
         save_button = QtWidgets.QPushButton("Save Account Settings")
+        save_button.setObjectName("save_button")
         save_button.clicked.connect(self.save_click)
         main_layout.addWidget(save_button)
 

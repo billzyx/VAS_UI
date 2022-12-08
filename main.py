@@ -10,10 +10,11 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         # Set window properties
         self.setWindowTitle("My UI")
-        self.setMinimumSize(600, 400)
+        self.setMinimumSize(1800, 1200)
 
         # Create a widget for the main content area
         self.main_widget = QtWidgets.QWidget()
+        # self.main_widget.setStyleSheet("background-color: grey")
         self.setCentralWidget(self.main_widget)
 
         # Create a vertical layout for the main content area
@@ -54,4 +55,7 @@ if __name__ == '__main__':
     app = QApplication([])
     window = MainWindow()
     window.show()
+    with open("style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
     app.exec_()

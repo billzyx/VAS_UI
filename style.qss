@@ -1,0 +1,88 @@
+QWidget#main_content{
+    color: #FFFFFF
+}
+
+QListWidget {
+    color: #DFECFF;
+    background-color: rgb(246, 251, 255);
+}
+
+QLabel#select_devices_header {
+    padding:30px
+}
+
+QListWidget::item {
+    height: 50px;
+}
+
+QListWidget::item:selected {
+    background-color: #2ABf9E;
+}
+
+QLineEdit {
+    padding: 20px;
+    background-color:rgb(246, 251, 255)
+}
+
+QComboBox {
+    padding: 20px;
+    background-color:rgb(246, 251, 255)
+}
+
+QLabel#light_text {
+    font: 75 8pt "MS Shell Dlg 2";
+    qproperty-alignment: AlignCenter;
+    font-weight: 10;
+}
+
+QLabel#headline {
+    border: 0px;
+    padding: 0px;
+    font: 75 18pt "MS Shell Dlg 2";
+    qproperty-alignment: AlignCenter;
+    font-weight: bold;
+}
+
+QLabel#headline_label {
+    border: 0px;
+    padding: 0px;
+    font: 75 18pt "MS Shell Dlg 2";
+    font-weight: bold;
+}
+
+QLabel {
+    border: 0px;
+    padding-bottom: 10px;
+    font: 75 10pt "MS Shell Dlg 2";
+}
+
+QPushButton {
+    Background-color: #448FFF;
+    font: 75 10pt "MS Shell Dlg 2";
+    color: #FFFFFF;
+    padding:20px;
+    border-radius: 15px;
+}
+
+QPushButton#add_session, QPushButton#add_account {
+    Background-color: #448FFF;
+    font: 75 10pt "MS Shell Dlg 2";
+    color: #FFFFFF;
+    border: 0px;
+    margin-left: 50px;
+    border-radius: 15px;
+}
+
+QPushButton#save_button, QPushButton#start_object_name {
+    width: 400;
+    Background-color: #448FFF;
+    font: 75 12pt "MS Shell Dlg 2";
+    color: #FFFFFF;
+    padding:20px;
+    border-radius: 15px;
+    border: 0px;
+    margin: 50px;
+    qproperty-alignment: AlignCenter;
+}
+
+QPushButton::item:selected { color: red }

@@ -16,15 +16,18 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         # create headline label
         headline_label = QtWidgets.QLabel("Downloading")
-
+        headline_label.setObjectName("headline_label")
         # create list widgets and buttons
         self.list_widget_account = AccountSessionQListWidget(self.modify_account_click, self.delete_account)
-
+        self.list_widget_account.setFixedSize(800,400)
         self.list_widget_session = AccountSessionQListWidget(self.modify_session_click, self.delete_session)
+        self.list_widget_session.setFixedSize(800,400)
 
         button1 = QtWidgets.QPushButton("Add Account")
+        button1.setObjectName('add_account')
         button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
+        button2.setObjectName('add_session')
         button2.clicked.connect(self.add_session_click)
 
         self.load_accounts()
@@ -52,9 +55,13 @@ class DownloadingWidget(QtWidgets.QWidget):
         layout2.addWidget(button2)
 
         self.progress_bar = QtWidgets.QProgressBar()
+        self.progress_bar.setObjectName("progress_bar")
+        self.progress_bar.setVisible(0)
 
         # create start downloading button
         self.start_button = QtWidgets.QPushButton("Start downloading")
+        # self.start_button.setFixedWidth(400)
+        self.start_button.setObjectName("start_object_name")
         self.start_button.clicked.connect(self.start_downloading_click)
 
         self.download_status = QtWidgets.QLabel("")
@@ -150,6 +157,7 @@ class DownloadingWidget(QtWidgets.QWidget):
         config_file_path_list = config_tool.generate_download_configs(account_list, session_list)
 
         if config_tool.check_downloading_exist(config_file_path_list):
+            self.progress_bar.setVisible(1)
             self.start_download(config_file_path_list)
         else:
             self.msg_box = QMessageBox()

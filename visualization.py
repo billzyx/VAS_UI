@@ -74,12 +74,13 @@ class VisualizationTab(QtWidgets.QWidget):
         open_button_layout.setAlignment(Qt.AlignCenter)
         open_button_layout.addStretch()
         open_button = QtWidgets.QPushButton("Open")
-        open_button.setFixedSize(100, 50)
+        open_button.setFixedSize(200, 75)
         open_button.clicked.connect(self.open_action)
         open_button_layout.addWidget(open_button)
 
         # create placeholder text
         placeholder_text = QtWidgets.QLabel(".cha or .txt file")
+        placeholder_text.setObjectName("light_text")
         open_button_layout.addWidget(placeholder_text)
         open_button_layout.addStretch()
         self.content_layout.addLayout(open_button_layout)
