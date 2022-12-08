@@ -99,8 +99,8 @@ class VisualizationTab(QtWidgets.QWidget):
 
         self.player = QMediaPlayer()
         self.table_widget = None
-        self.audio_files = []
-        self.current_file = 0
+        self.audio_list = []
+        self.current_audio = 0
 
     def open_action(self):
         file_path = QtWidgets.QFileDialog.getOpenFileName(
@@ -132,8 +132,18 @@ class VisualizationTab(QtWidgets.QWidget):
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
                 self.msg_box.show()
                 return
+            # try:
             if self.table_widget.file_path.endswith('.txt'):
                 self.play_txt()
+            elif self.table_widget.file_path.endswith('.cha'):
+                self.play_cha()
+            # except:
+            #     self.msg_box = QMessageBox()
+            #     self.msg_box.setIcon(QMessageBox.Warning)
+            #     self.msg_box.setText("Cannot find audio file!")
+            #     self.msg_box.setStandardButtons(QMessageBox.Ok)
+            #     self.msg_box.show()
+            #     return
         elif self.play_button.text() == 'Pause':
             self.player.pause()
             self.play_button.setText('Continue Play')
@@ -142,44 +152,76 @@ class VisualizationTab(QtWidgets.QWidget):
             self.play_button.setText('Pause')
 
     def stop_click(self):
-        self.player.stop()
-        self.table_widget.cancel_highlight(self.current_file)
-        self.player = None
-        self.play_button.setText("Play")
+        if self.table_widget:
+            self.player.stop()
+            self.table_widget.cancel_highlight(self.current_audio)
+            self.player = None
+            self.play_button.setText("Play")
 
     def on_media_status_changed(self, status):
         if status == QMediaPlayer.MediaStatus.EndOfMedia:
             # Set the next audio file to play
             self.play_next()
 
+    def on_position_changed(self, position):
+        # This callback will be called at regular intervals
+        # during the playback of the audio file. The position
+        # parameter indicates the current position of the
+        # media player in milliseconds.
+        end_time = int(self.audio_list[self.current_audio][1])
+        if position >= end_time:
+            self.player.pause()
+            self.play_next()
+
     def play_next(self):
-        if self.current_file > 0:
-            self.table_widget.cancel_highlight(self.current_file)
-        self.current_file += 1
-        if self.current_file >= len(self.audio_files):
+        if self.current_audio >= 0:
+            self.table_widget.cancel_highlight(self.current_audio)
+        self.current_audio += 1
+        if self.current_audio >= len(self.audio_list):
             self.play_button.setText("Play")
             return
-        if not self.audio_files[self.current_file]:
+        if not self.audio_list[self.current_audio]:
             self.play_next()
             return
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_files[self.current_file])))
-        self.table_widget.set_highlight(self.current_file)
+
+        if self.table_widget.file_path.endswith('.txt'):
+            self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_list[self.current_audio])))
+        else:
+            # play .cha
+            start_time = int(self.audio_list[self.current_audio][0])
+            self.player.setPosition(start_time)
+
+        self.table_widget.set_highlight(self.current_audio)
 
         # Play the next audio file
         self.player.play()
 
     def play_txt(self):
-        self.audio_files = []
-        self.current_file = 0
+        self.audio_list = []
+        self.current_audio = -1
         self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
                 audio_path = os.path.join(os.path.dirname(self.table_widget.file_path), 'audio', audio)
-                self.audio_files.append(audio_path)
+                self.audio_list.append(audio_path)
             else:
-                self.audio_files.append(None)
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_files[self.current_file])))
+                self.audio_list.append(None)
         self.player.mediaStatusChanged.connect(self.on_media_status_changed)
+        self.play_button.setText("Pause")
+        self.play_next()
+
+    def play_cha(self):
+        self.audio_list = []
+        self.current_audio = 0
+        self.player = QMediaPlayer()
+        for idx, audio in enumerate(self.table_widget.audio_list):
+            if audio:
+                self.audio_list.append(audio.split('_'))
+            else:
+                self.audio_list.append(None)
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.table_widget.file_path.replace('.cha', '.wav'))))
+        self.player.positionChanged.connect(self.on_position_changed)
+        self.player.setNotifyInterval(10)
         self.play_button.setText("Pause")
         self.play_next()
 
