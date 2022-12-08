@@ -1,7 +1,9 @@
+import os
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, \
-    QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView
+    QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView, QTableWidgetSelectionRange
 
 import transctipt_tools
 
@@ -64,9 +66,11 @@ class VisualizationTab(QtWidgets.QWidget):
 
         # create play/stop button horizontal layout
         play_button_layout = QtWidgets.QHBoxLayout()
-        play_button = QtWidgets.QPushButton("Play")
+        self.play_button = QtWidgets.QPushButton("Play")
+        self.play_button.clicked.connect(self.play_click)
         stop_button = QtWidgets.QPushButton("Stop")
-        play_button_layout.addWidget(play_button)
+        stop_button.clicked.connect(self.stop_click)
+        play_button_layout.addWidget(self.play_button)
         play_button_layout.addWidget(stop_button)
         self.main_layout.addLayout(play_button_layout)
 
@@ -93,12 +97,17 @@ class VisualizationTab(QtWidgets.QWidget):
         # set main layout
         self.setLayout(self.main_layout)
 
+        self.player = QMediaPlayer()
+        self.table_widget = None
+        self.audio_files = []
+        self.current_file = 0
+
     def open_action(self):
         file_path = QtWidgets.QFileDialog.getOpenFileName(
             self, caption='Select .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
         print(file_path[0])
         try:
-            self.tabel_widget = TableWidget(file_path[0])
+            self.table_widget = TableWidget(file_path[0])
         except:
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
@@ -112,7 +121,67 @@ class VisualizationTab(QtWidgets.QWidget):
                 item.widget().deleteLater()
             elif item.layout() is not None:
                 item.layout().deleteLater()
-        self.content_layout.addWidget(self.tabel_widget)
+        self.content_layout.addWidget(self.table_widget)
+
+    def play_click(self):
+        if self.play_button.text() == 'Play':
+            if not self.table_widget:
+                self.msg_box = QMessageBox()
+                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setText("Open a file first!")
+                self.msg_box.setStandardButtons(QMessageBox.Ok)
+                self.msg_box.show()
+                return
+            if self.table_widget.file_path.endswith('.txt'):
+                self.play_txt()
+        elif self.play_button.text() == 'Pause':
+            self.player.pause()
+            self.play_button.setText('Continue Play')
+        else:
+            self.player.play()
+            self.play_button.setText('Pause')
+
+    def stop_click(self):
+        self.player.stop()
+        self.table_widget.cancel_highlight(self.current_file)
+        self.player = None
+        self.play_button.setText("Play")
+
+    def on_media_status_changed(self, status):
+        if status == QMediaPlayer.MediaStatus.EndOfMedia:
+            # Set the next audio file to play
+            self.play_next()
+
+    def play_next(self):
+        if self.current_file > 0:
+            self.table_widget.cancel_highlight(self.current_file)
+        self.current_file += 1
+        if self.current_file >= len(self.audio_files):
+            self.play_button.setText("Play")
+            return
+        if not self.audio_files[self.current_file]:
+            self.play_next()
+            return
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_files[self.current_file])))
+        self.table_widget.set_highlight(self.current_file)
+
+        # Play the next audio file
+        self.player.play()
+
+    def play_txt(self):
+        self.audio_files = []
+        self.current_file = 0
+        self.player = QMediaPlayer()
+        for idx, audio in enumerate(self.table_widget.audio_list):
+            if audio:
+                audio_path = os.path.join(os.path.dirname(self.table_widget.file_path), 'audio', audio)
+                self.audio_files.append(audio_path)
+            else:
+                self.audio_files.append(None)
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_files[self.current_file])))
+        self.player.mediaStatusChanged.connect(self.on_media_status_changed)
+        self.play_button.setText("Pause")
+        self.play_next()
 
 
 class TableWidget(QtWidgets.QWidget):
@@ -123,6 +192,7 @@ class TableWidget(QtWidgets.QWidget):
         self.table = QTableWidget()
 
         self.load_file(file_path)
+        self.file_path = file_path
 
         # self.table.resizeColumnsToContents()
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -141,6 +211,8 @@ class TableWidget(QtWidgets.QWidget):
         elif file_path.endswith('.txt'):
             speaker_list, text_list, audio_list = transctipt_tools.load_txt_file(file_path)
 
+        self.audio_list = audio_list
+
         self.table.setRowCount(len(speaker_list))
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
@@ -157,3 +229,10 @@ class TableWidget(QtWidgets.QWidget):
             play_btn = QPushButton('Play')
             play_btn.setFixedSize(50, 30)
             self.table.setCellWidget(row, 2, play_btn)
+
+    def set_highlight(self, row):
+        self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), True)
+        self.table.setStyleSheet("QTableWidget::item:selected{background-color: blue;}")
+
+    def cancel_highlight(self, row):
+        self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), False)
