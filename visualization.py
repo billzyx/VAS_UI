@@ -108,6 +108,7 @@ class VisualizationTab(QtWidgets.QWidget):
         print(file_path[0])
         try:
             self.table_widget = TableWidget(file_path[0])
+            self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
         except:
             self.msg_box = QMessageBox()
             self.msg_box.setIcon(QMessageBox.Warning)
@@ -133,10 +134,7 @@ class VisualizationTab(QtWidgets.QWidget):
                 self.msg_box.show()
                 return
             # try:
-            if self.table_widget.file_path.endswith('.txt'):
-                self.play_txt()
-            elif self.table_widget.file_path.endswith('.cha'):
-                self.play_cha()
+            self.play()
             # except:
             #     self.msg_box = QMessageBox()
             #     self.msg_box.setIcon(QMessageBox.Warning)
@@ -150,6 +148,15 @@ class VisualizationTab(QtWidgets.QWidget):
         else:
             self.player.play()
             self.play_button.setText('Pause')
+
+    def table_item_double_click_play(self, item):
+        self.play(item.row())
+
+    def play(self, audio_idx=0):
+        if self.table_widget.file_path.endswith('.txt'):
+            self.play_txt(audio_idx)
+        elif self.table_widget.file_path.endswith('.cha'):
+            self.play_cha(audio_idx)
 
     def stop_click(self):
         if self.table_widget:
@@ -196,9 +203,9 @@ class VisualizationTab(QtWidgets.QWidget):
         # Play the next audio file
         self.player.play()
 
-    def play_txt(self):
+    def play_txt(self, audio_idx=0):
         self.audio_list = []
-        self.current_audio = -1
+        self.current_audio = audio_idx - 1
         self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
@@ -210,9 +217,9 @@ class VisualizationTab(QtWidgets.QWidget):
         self.play_button.setText("Pause")
         self.play_next()
 
-    def play_cha(self):
+    def play_cha(self, audio_idx=0):
         self.audio_list = []
-        self.current_audio = -1
+        self.current_audio = audio_idx - 1
         self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
@@ -232,6 +239,7 @@ class TableWidget(QtWidgets.QWidget):
         self.setWindowTitle("Table Widget")
 
         self.table = QTableWidget()
+        self.table.setToolTip('Double click to play')
 
         self.load_file(file_path)
         self.file_path = file_path
@@ -273,6 +281,17 @@ class TableWidget(QtWidgets.QWidget):
             self.table.setCellWidget(row, 2, play_btn)
 
     def set_highlight(self, row):
+        row_item = self.table.item(row, 0)
+        # Get the coordinates of the first row in the viewport
+        rect = self.table.visualItemRect(row_item)
+
+        # Get the bounds of the viewport
+        viewport = self.table.viewport().rect()
+
+        # Check if the top and bottom coordinates of the row are within the bounds of the viewport
+        if not (rect.top() >= viewport.top() and rect.bottom() <= viewport.bottom()):
+            self.table.scrollToItem(row_item, QAbstractItemView.PositionAtCenter)
+
         self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), True)
         self.table.setStyleSheet("QTableWidget::item:selected{background-color: blue;}")
 
