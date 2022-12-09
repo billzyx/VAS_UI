@@ -52,6 +52,8 @@ class MainContentWidget(QtWidgets.QWidget):
 
 
 if __name__ == '__main__':
+    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
+    QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
     app = QApplication([])
     window = MainWindow()
     window.show()
