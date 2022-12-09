@@ -134,7 +134,8 @@ class VisTab(QtWidgets.QWidget):
 
     def stop_click(self):
         if self.table_widget:
-            self.player.stop()
+            if self.player:
+                self.player.stop()
             self.table_widget.cancel_highlight(self.current_audio)
             self.player = None
             self.play_button.setText("Play")
