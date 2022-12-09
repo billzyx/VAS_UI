@@ -19,17 +19,17 @@ class DownloadingWidget(QtWidgets.QWidget):
         headline_label.setObjectName("headline_label")
         # create list widgets and buttons
         self.list_widget_account = AccountSessionQListWidget(self.modify_account_click, self.delete_account)
-        self.list_widget_account.setMinimumSize(800,400)
+        # self.list_widget_account.setMinimumSize(800,400)
         self.list_widget_session = AccountSessionQListWidget(self.modify_session_click, self.delete_session)
-        self.list_widget_session.setMinimumSize(800,400)
+        # self.list_widget_session.setMinimumSize(800,400)
 
         button1 = QtWidgets.QPushButton("Add Account")
         button1.setObjectName('add_account')
-        button1.setMinimumWidth(400)
+        # button1.setMinimumWidth(400)
         button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
         button2.setObjectName('add_session')
-        button2.setMinimumWidth(400)
+        # button2.setMinimumWidth(400)
         button2.clicked.connect(self.add_session_click)
 
         self.load_accounts()

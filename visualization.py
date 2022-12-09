@@ -69,12 +69,12 @@ class VisualizationTab(QtWidgets.QWidget):
 
         # create play/stop button horizontal layout
         play_button_layout = QtWidgets.QHBoxLayout()
-        self.play_button = QtWidgets.QPushButton("")
+        self.play_button = QtWidgets.QPushButton("Play")
         self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
         # self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
         self.play_button.setObjectName("icon_btn")
         self.play_button.clicked.connect(self.play_click)
-        stop_button = QtWidgets.QPushButton("")
+        stop_button = QtWidgets.QPushButton("Stop")
         stop_button.setIcon(stop_button.style().standardIcon(getattr(QStyle,"SP_MediaStop")))
         stop_button.setObjectName("icon_btn")
         stop_button.clicked.connect(self.stop_click)
@@ -149,9 +149,11 @@ class VisualizationTab(QtWidgets.QWidget):
             self.play()
         elif self.play_button.text() == 'Pause':
             self.player.pause()
+            self.play_button.setText('Continue Play')
             self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
         else:
             self.player.play()
+            self.play_button.setText('Pause')
             self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPause")))
 
     def table_item_double_click_play(self, item):
@@ -178,6 +180,7 @@ class VisualizationTab(QtWidgets.QWidget):
             self.player.stop()
             self.table_widget.cancel_highlight(self.current_audio)
             self.player = None
+            self.play_button.setText("Play")
             self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
 
     def on_media_status_changed(self, status):

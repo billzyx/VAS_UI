@@ -12,8 +12,8 @@ class SessionSettingsWidget(QWidget):
     def __init__(self, downloading_widget=None, list_widget_item=None):
         super().__init__()
         self.setWindowTitle("Session Widget")
-        self.setMinimumSize(700, 950)
-        self.setMaximumSize(700, 950)
+        # self.setMinimumSize(700, 950)
+        # self.setMaximumSize(700, 950)
 
         self.downloading_widget = downloading_widget
         self.list_widget_item = list_widget_item

@@ -9,8 +9,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         # Set window properties
-        self.setWindowTitle("My UI")
-        self.setMinimumSize(1800, 1200)
+        self.setWindowTitle("VAS Tool Box")
+        self.setMinimumSize(800, 600)
 
         # Create a widget for the main content area
         self.main_widget = QtWidgets.QWidget()
@@ -31,7 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.splitter.addWidget(self.sidebar_widget)
 
         # Make the size of the sidebar changeable
-        self.splitter.setSizes([500, 1300])
+        self.splitter.setSizes([150, 450])
 
         # Create a widget for the main content and add it to the splitter
         self.splitter.addWidget(self.main_content_widget)
