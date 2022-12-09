@@ -29,7 +29,6 @@ class AccountSettingsWidget(QWidget):
         username_header = QtWidgets.QLabel("Username")
         self.username_textbox = QtWidgets.QLineEdit()
         self.username_textbox.setPlaceholderText("Userame")
-        self.username_textbox.setStyleSheet("{ font-size: 12pt; }")
         username_header.setObjectName("username_label")
         main_layout.addWidget(username_header)
         main_layout.addWidget(self.username_textbox)
@@ -38,9 +37,7 @@ class AccountSettingsWidget(QWidget):
         password_header = QtWidgets.QLabel("Password")
         password_header.setObjectName("password_label")
         self.password_textbox = QtWidgets.QLineEdit()
-        self.password_textbox.setStyleSheet("{ font-size: 12pt; }")
         self.password_textbox.setPlaceholderText("Password");
-        self.password_textbox.setObjectName("password_box")
         main_layout.addWidget(password_header)
         main_layout.addWidget(self.password_textbox)
 
@@ -50,7 +47,6 @@ class AccountSettingsWidget(QWidget):
         save_dir_header.setObjectName("save_dir_label")
         self.save_dir_textbox = QtWidgets.QLineEdit()
         self.save_dir_textbox.setText('vas_save')
-        self.save_dir_textbox.setStyleSheet("{ font-size: 12pt; }")
         main_layout.addWidget(save_dir_header)
         save_dir_layout.addWidget(self.save_dir_textbox)
         select_dir_button = QtWidgets.QPushButton("Select Path")

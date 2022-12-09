@@ -20,6 +20,7 @@ QListWidget::item:selected {
 }
 
 QLineEdit {
+    font-size:12pt;
     padding: 15px;
     background-color:rgb(246, 251, 255)
 }
