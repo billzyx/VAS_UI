@@ -119,6 +119,7 @@ class VisTab(QtWidgets.QWidget):
     def play(self, audio_idx=0, play_single_command=False):
         if play_single_command:
             self.play_button.setText('Play')
+            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
         try:
             if self.table_widget.file_path.endswith('.txt'):
                 self.play_txt(audio_idx, play_single_command)
@@ -171,6 +172,7 @@ class VisTab(QtWidgets.QWidget):
         self.current_audio += 1
         if self.current_audio >= len(self.audio_list):
             self.play_button.setText("Play")
+            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
             return
         if not self.audio_list[self.current_audio]:
             self.play_next()
@@ -207,6 +209,7 @@ class VisTab(QtWidgets.QWidget):
             return
         self.player.mediaStatusChanged.connect(self.on_media_status_changed)
         self.play_button.setText("Pause")
+        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
         self.play_next()
 
     def play_cha(self, audio_idx=0, play_single_command=False):
@@ -234,6 +237,7 @@ class VisTab(QtWidgets.QWidget):
 
         self.player.positionChanged.connect(self.on_position_changed)
         self.play_button.setText("Pause")
+        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
         self.play_next()
 
 
