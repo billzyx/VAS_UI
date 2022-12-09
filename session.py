@@ -12,6 +12,7 @@ class SessionSettingsWidget(QWidget):
     def __init__(self, downloading_widget=None, list_widget_item=None):
         super().__init__()
         self.setWindowTitle("Session Widget")
+        self.setMinimumSize(700, 950)
 
         self.downloading_widget = downloading_widget
         self.list_widget_item = list_widget_item
@@ -22,51 +23,62 @@ class SessionSettingsWidget(QWidget):
         # create headline
         headline = QtWidgets.QLabel("Session Settings")
         main_layout.addWidget(headline)
+        headline.setObjectName("session_headline")
 
         # create session_name header and textbox
         session_name_header = QtWidgets.QLabel("Session name")
+        # session_name_header.setObjectName('session_name_header')
         self.session_name_textbox = QtWidgets.QLineEdit()
+        self.session_name_textbox.setObjectName('session_name_editor')
         self.session_name_textbox.setText('{}_new_session'.format(datetime.today().strftime("%Y-%m-%d-%H-%M-%S")))
         main_layout.addWidget(session_name_header)
+        session_name_header.setObjectName("session_name_header")
         main_layout.addWidget(self.session_name_textbox)
 
         # create date from layout
-        date_from_layout = QtWidgets.QHBoxLayout()
+        # date_from_layout = QtWidgets.QHBoxLayout()
         date_from_label = QtWidgets.QLabel("Date from")
+        date_from_label.setObjectName('date_from_label')
         self.date_from_box = QtWidgets.QDateTimeEdit(calendarPopup=True)
         self.date_from_box.setDateTime(QtCore.QDateTime.currentDateTime())
-        date_from_layout.addWidget(date_from_label)
-        date_from_layout.addWidget(self.date_from_box)
-        main_layout.addLayout(date_from_layout)
+        main_layout.addWidget(date_from_label)
+        main_layout.addWidget(self.date_from_box)
+        # main_layout.addLayout(date_from_layout)
 
         # create date to layout
-        date_to_layout = QtWidgets.QHBoxLayout()
+        # date_to_layout = QtWidgets.QHBoxLayout()
         date_to_label = QtWidgets.QLabel("Date to")
+        date_to_label.setObjectName('date_to_label')
         self.date_to_box = QtWidgets.QDateTimeEdit(calendarPopup=True)
         self.date_to_box.setDateTime(QtCore.QDateTime.currentDateTime())
-        date_to_layout.addWidget(date_to_label)
-        date_to_layout.addWidget(self.date_to_box)
-        main_layout.addLayout(date_to_layout)
+        main_layout.addWidget(date_to_label)
+        main_layout.addWidget(self.date_to_box)
+        # main_layout.addLayout(date_to_layout)
 
         # create save date and time checkbox layout
         save_date_time_layout = QtWidgets.QHBoxLayout()
         save_date_time_label = QtWidgets.QLabel("Save date and time in the transcript")
+        save_date_time_label.setObjectName('save_date_time_label')
         self.save_date_time_checkbox = QtWidgets.QCheckBox()
         save_date_time_layout.addWidget(save_date_time_label)
         save_date_time_layout.addWidget(self.save_date_time_checkbox)
+        save_date_time_layout.setContentsMargins(0, 30, 0, 20)
         main_layout.addLayout(save_date_time_layout)
 
         # create save device name checkbox layout
         save_device_name_layout = QtWidgets.QHBoxLayout()
 
         save_device_name_label = QtWidgets.QLabel("Save device name in the transcript")
+        save_device_name_label.setObjectName('save_device_name_label')
         self.save_device_name_checkbox = QtWidgets.QCheckBox()
         save_device_name_layout.addWidget(save_device_name_label)
         save_device_name_layout.addWidget(self.save_device_name_checkbox)
+        save_device_name_layout.setContentsMargins(0, 20, 0, 0)
         main_layout.addLayout(save_device_name_layout)
         # create save button
         save_button = QtWidgets.QPushButton("Save session settings")
         save_button.clicked.connect(self.save_click)
+        save_button.setObjectName("save_button")
         main_layout.addWidget(save_button)
 
         # set main layout
@@ -132,4 +144,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     session_settings_widget = SessionSettingsWidget()
     session_settings_widget.show()
+    with open("style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
     sys.exit(app.exec_())

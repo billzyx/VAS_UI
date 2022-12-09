@@ -31,7 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.splitter.addWidget(self.sidebar_widget)
 
         # Make the size of the sidebar changeable
-        self.splitter.setSizes([150, 450])
+        self.splitter.setSizes([500, 1300])
 
         # Create a widget for the main content and add it to the splitter
         self.splitter.addWidget(self.main_content_widget)

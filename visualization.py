@@ -1,9 +1,9 @@
 import os
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtGui, QtWidgets, QtCore
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, \
-    QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView, QTableWidgetSelectionRange
+    QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView, QTableWidgetSelectionRange, QStyle
 
 import transctipt_tools
 
@@ -25,6 +25,7 @@ class VisualizationWidget(QtWidgets.QWidget):
 
         # Create a button to add new tabs
         self.add_button = QPushButton("Add Tab")
+        self.add_button.setObjectName('add_tab')
 
         # Connect the clicked signal to the add_tab slot
         self.add_button.clicked.connect(self.add_tab)
@@ -68,9 +69,14 @@ class VisualizationTab(QtWidgets.QWidget):
 
         # create play/stop button horizontal layout
         play_button_layout = QtWidgets.QHBoxLayout()
-        self.play_button = QtWidgets.QPushButton("Play")
+        self.play_button = QtWidgets.QPushButton("")
+        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+        # self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
+        self.play_button.setObjectName("icon_btn")
         self.play_button.clicked.connect(self.play_click)
-        stop_button = QtWidgets.QPushButton("Stop")
+        stop_button = QtWidgets.QPushButton("")
+        stop_button.setIcon(stop_button.style().standardIcon(getattr(QStyle,"SP_MediaStop")))
+        stop_button.setObjectName("icon_btn")
         stop_button.clicked.connect(self.stop_click)
         play_button_layout.addWidget(self.play_button)
         play_button_layout.addWidget(stop_button)
@@ -84,6 +90,7 @@ class VisualizationTab(QtWidgets.QWidget):
         open_button_layout.addStretch()
         open_button = QtWidgets.QPushButton("Open")
         open_button.setFixedSize(200, 75)
+        open_button.setStyleSheet("font-size:12pt;")
         open_button.clicked.connect(self.open_action)
         open_button_layout.addWidget(open_button)
 
@@ -142,10 +149,10 @@ class VisualizationTab(QtWidgets.QWidget):
             self.play()
         elif self.play_button.text() == 'Pause':
             self.player.pause()
-            self.play_button.setText('Continue Play')
+            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
         else:
             self.player.play()
-            self.play_button.setText('Pause')
+            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPause")))
 
     def table_item_double_click_play(self, item):
         self.play(item.row())
@@ -171,7 +178,7 @@ class VisualizationTab(QtWidgets.QWidget):
             self.player.stop()
             self.table_widget.cancel_highlight(self.current_audio)
             self.player = None
-            self.play_button.setText("Play")
+            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
 
     def on_media_status_changed(self, status):
         if status == QMediaPlayer.MediaStatus.EndOfMedia:
@@ -305,18 +312,19 @@ class TableWidget(QtWidgets.QWidget):
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
 
-        self.table.setColumnWidth(0, 100)
-        self.table.setColumnWidth(1, 400)
-        self.table.setColumnWidth(2, 100)
+        self.table.setColumnWidth(0, 230)
+        self.table.setColumnWidth(1, 650)
+        self.table.setColumnWidth(2, 120)
 
         for row in range(len(speaker_list)):
             self.table.setItem(row, 0, QTableWidgetItem(speaker_list[row]))
             self.table.setItem(row, 1, QTableWidgetItem(text_list[row]))
-
             self.table.resizeRowToContents(row)
             if audio_list[row]:
-                play_btn = QPushButton('Play')
-                play_btn.setFixedSize(50, 30)
+                play_btn = QPushButton("")
+                play_btn.setFixedSize(200, 40)
+                play_btn.setIcon(play_btn.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+                play_btn.setObjectName("play_btn")
                 play_btn.clicked.connect(
                     lambda _, x=row: self.visualization_tab.play(x, True))
                 self.table.setCellWidget(row, 2, play_btn)

@@ -45,8 +45,8 @@ class SidebarWidget(QtWidgets.QWidget):
         self.sidebar_button_layout.addWidget(self.button_labeling)
 
         # Add some styling to the buttons
-        self.button_downloading.setStyleSheet("background-color: #448FFF; color: white; font-size: 10pt; padding: 10px; font-weight: bold;")
-        self.button_visualization.setStyleSheet("background-color: #448FFF; color: white; font-size: 10pt; padding: 10px; font-weight: bold;")
-        self.button_labeling.setStyleSheet("background-color: #448FFF; color: white; font-size: 10pt; padding: 10px; font-weight: bold;")
+        self.button_downloading.setStyleSheet("background-color: #448FFF; color: white; font-size: 15pt; padding: 10px; font-weight: bold;")
+        self.button_visualization.setStyleSheet("background-color: #448FFF; color: white; font-size: 15pt; padding: 10px; font-weight: bold;")
+        self.button_labeling.setStyleSheet("background-color: #448FFF; color: white; font-size: 15pt; padding: 10px; font-weight: bold;")
 
 

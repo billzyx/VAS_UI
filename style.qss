@@ -20,12 +20,17 @@ QListWidget::item:selected {
 }
 
 QLineEdit {
-    padding: 20px;
+    padding: 15px;
     background-color:rgb(246, 251, 255)
 }
 
-QComboBox {
-    padding: 20px;
+QLineEdit#session_name_editor{
+    font-size: 12pt;
+}
+
+QComboBox, QDateTimeEdit {
+    font-size: 12pt;
+    padding: 15px;
     background-color:rgb(246, 251, 255)
 }
 
@@ -35,6 +40,18 @@ QLabel#light_text {
     font-weight: 10;
 }
 
+
+QLabel#headline,QLabel#session_headline {
+    line-height: 1;
+    border: 0;
+    padding: 0;
+    qproperty-margin: 0;
+    font: 75 20pt "MS Shell Dlg 2";
+    qproperty-alignment: AlignCenter;
+    font-weight: bold;
+}
+
+
 QLabel#headline {
     border: 0px;
     padding: 0px;
@@ -42,6 +59,15 @@ QLabel#headline {
     qproperty-alignment: AlignCenter;
     font-weight: bold;
 }
+
+QLabel#password_label, QLabel#username_label, QLabel#save_dir_label, QLabel#select_Device_label, QLabel#save_date_time_label, 
+QLabel#date_to_label, QLabel#date_from_label, QLabel#save_device_name_label {
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    font: 75 12pt "MS Shell Dlg 2";
+}
+
 
 QLabel#headline_label {
     border: 0px;
@@ -51,22 +77,62 @@ QLabel#headline_label {
 }
 
 QLabel {
-    border: 0px;
-    padding-bottom: 10px;
+    line-height: 1;
+    border: 0;
+    padding: 0;
+    qproperty-margin: 0;
     font: 75 10pt "MS Shell Dlg 2";
+}
+
+QLabel#session_name_header{
+    line-height: 1.5;
+    border:  0px;
+    padding: 0px;
+    margin:  0px;
+    font: 75 12pt "MS Shell Dlg 2";
 }
 
 QPushButton {
     Background-color: #448FFF;
-    font: 75 10pt "MS Shell Dlg 2";
+    font: 75 14pt "MS Shell Dlg 2";
     color: #FFFFFF;
-    padding:20px;
+    padding:15px;
     border-radius: 15px;
 }
 
+QPushButton#add_tab {
+    Background-color: #448FFF;
+    font: 75 12pt "MS Shell Dlg 2";
+    color: #FFFFFF;
+    padding:15px;
+    border-radius: 15px;
+}
+
+QPushButton#select_device, QPushButton#select_dir_button{
+    Background-color: #448FFF;
+    font: 75 12pt "MS Shell Dlg 2";
+    color: #FFFFFF;
+    padding:10px;
+    border-radius: 10px;
+    min-width: 200px;
+    max-width: 200px;
+}
+
+
+QPushButton#icon_btn{
+    Background-color: Transparent;
+    border:  0px;
+
+}
+
+QPushButton#play_btn{
+    Background-color: Transparent;
+}
+
+
 QPushButton#add_session, QPushButton#add_account {
     Background-color: #448FFF;
-    font: 75 10pt "MS Shell Dlg 2";
+    font: 75 14pt "MS Shell Dlg 2";
     color: #FFFFFF;
     border: 0px;
     margin-left: 50px;
@@ -76,13 +142,13 @@ QPushButton#add_session, QPushButton#add_account {
 QPushButton#save_button, QPushButton#start_object_name {
     width: 400;
     Background-color: #448FFF;
-    font: 75 12pt "MS Shell Dlg 2";
+    font: 75 14pt "MS Shell Dlg 2";
     color: #FFFFFF;
-    padding:20px;
+    padding:15px;
     border-radius: 15px;
     border: 0px;
     margin: 50px;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton::item:selected { color: red }
+  

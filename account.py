@@ -15,7 +15,7 @@ class AccountSettingsWidget(QWidget):
         self.list_widget_item = list_widget_item
 
         self.setWindowTitle("Account Settings")
-        self.setMinimumSize(852, 1190)
+        self.setMinimumSize(700, 950)
 
         # create main vertical layout
         main_layout = QtWidgets.QVBoxLayout()
@@ -28,25 +28,33 @@ class AccountSettingsWidget(QWidget):
         # create username header and textbox
         username_header = QtWidgets.QLabel("Username")
         self.username_textbox = QtWidgets.QLineEdit()
-        self.username_textbox.setPlaceholderText("Userame");
+        self.username_textbox.setPlaceholderText("Userame")
+        self.username_textbox.setStyleSheet("{ font-size: 12pt; }")
+        username_header.setObjectName("username_label")
         main_layout.addWidget(username_header)
         main_layout.addWidget(self.username_textbox)
 
         # create password header and textbox
         password_header = QtWidgets.QLabel("Password")
+        password_header.setObjectName("password_label")
         self.password_textbox = QtWidgets.QLineEdit()
+        self.password_textbox.setStyleSheet("{ font-size: 12pt; }")
         self.password_textbox.setPlaceholderText("Password");
+        self.password_textbox.setObjectName("password_box")
         main_layout.addWidget(password_header)
         main_layout.addWidget(self.password_textbox)
 
         save_dir_layout = QtWidgets.QHBoxLayout()
         # create save directory header and textbox
         save_dir_header = QtWidgets.QLabel("Save Directory")
+        save_dir_header.setObjectName("save_dir_label")
         self.save_dir_textbox = QtWidgets.QLineEdit()
         self.save_dir_textbox.setText('vas_save')
+        self.save_dir_textbox.setStyleSheet("{ font-size: 12pt; }")
         main_layout.addWidget(save_dir_header)
         save_dir_layout.addWidget(self.save_dir_textbox)
         select_dir_button = QtWidgets.QPushButton("Select Path")
+        select_dir_button.setObjectName("select_dir_button")
         select_dir_button.clicked.connect(self.select_dir_click)
         save_dir_layout.addWidget(select_dir_button)
         main_layout.addLayout(save_dir_layout)
@@ -55,13 +63,18 @@ class AccountSettingsWidget(QWidget):
         devices_layout = QtWidgets.QHBoxLayout()
         # create select devices header and dropdown list
         select_devices_header = QtWidgets.QLabel("Select Devices")
+        select_devices_header.setObjectName("select_Device_label")
         self.select_devices_list = QtWidgets.QComboBox()
         self.select_devices_list.addItem('All')
+        self.select_devices_list.addItem('+Add Device...')
+        self.select_devices_list.setStyleSheet("QComboBox::down-arrow { qproperty-icon: SP_ToolBarVerticalExtensionButton; }")
+        self.select_devices_list.setObjectName('account_dropdown')
         main_layout.addWidget(select_devices_header)
         devices_layout.addWidget(self.select_devices_list)
         # create update devices button
         update_devices_button = QtWidgets.QPushButton("Update Devices")
         devices_layout.addWidget(update_devices_button)
+        update_devices_button.setObjectName("select_device")
         main_layout.addLayout(devices_layout)
 
         # create save account settings button
@@ -135,4 +148,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     account_settings_widget = AccountSettingsWidget(None)
     account_settings_widget.show()
+    with open("style.qss", "r") as f:
+        _style = f.read()
+        app.setStyleSheet(_style)
     sys.exit(app.exec_())
