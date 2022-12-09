@@ -16,7 +16,7 @@ class AccountSettingsWidget(QWidget):
 
         self.setWindowTitle("Account Settings")
         self.setMinimumSize(700, 950)
-
+        self.setMaximumSize(700, 950)
         # create main vertical layout
         main_layout = QtWidgets.QVBoxLayout()
 
