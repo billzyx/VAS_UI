@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayo
 from vis_tab import VisTab
 
 
-class VisualizationWidget(QtWidgets.QWidget):
+class LabelingWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
@@ -42,7 +42,7 @@ class VisualizationWidget(QtWidgets.QWidget):
         # Add a few tabs
         for i in range(1):
             self.tabs_count = 0
-            self.tabs.addTab(VisTab(self), "Tab {}".format(i))
+            self.tabs.addTab(VisTab(self, mode='labeling'), "Tab {}".format(i))
 
     def close_tab(self, index):
         # Get the widget for the tab
@@ -55,4 +55,4 @@ class VisualizationWidget(QtWidgets.QWidget):
     def add_tab(self):
         # Add a new tab with a default name
         self.tabs_count += 1
-        self.tabs.addTab(VisTab(self), "Tab {}".format(self.tabs_count))
+        self.tabs.addTab(VisTab(self, mode='labeling'), "Tab {}".format(self.tabs_count))
