@@ -1,6 +1,6 @@
 PyQt5~=5.15.4
 PyYAML~=6.0
-pydub~=0.25.1
+pydub==0.24.1
 binaryornot~=0.4.4
 selenium==3.141.0
 selenium-wire==3.0.2

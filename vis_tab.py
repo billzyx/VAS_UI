@@ -34,7 +34,7 @@ class VisTab(QtWidgets.QWidget):
 
         if mode == 'labeling':
             self.save_button = QtWidgets.QPushButton("Save")
-            self.play_button.clicked.connect(self.save_click)
+            self.save_button.clicked.connect(self.save_click)
             play_button_layout.addWidget(self.save_button)
 
         self.main_layout.addLayout(play_button_layout)
@@ -253,7 +253,13 @@ class VisTab(QtWidgets.QWidget):
         self.play_next()
 
     def save_click(self):
-        pass
+        self.table_widget.save_label()
+        self.msg_box = QMessageBox()
+        self.msg_box.setIcon(QMessageBox.Information)
+        self.msg_box.setText("Saved!")
+        self.msg_box.setStandardButtons(QMessageBox.Ok)
+        self.msg_box.show()
+        return
 
 
 class VisTableWidget(QtWidgets.QWidget):
@@ -266,8 +272,8 @@ class VisTableWidget(QtWidgets.QWidget):
         self.table = QTableWidget()
         self.table.setToolTip('Double click to play')
 
-        self.load_file(file_path)
         self.file_path = file_path
+        self.load_file(file_path)
 
         # self.table.resizeColumnsToContents()
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -307,6 +313,10 @@ class VisTableWidget(QtWidgets.QWidget):
         self.table.setColumnWidth(1, 650)
         self.table.setColumnWidth(2, 120)
 
+        # Load labels
+        if self.vis_tab.mode == 'labeling':
+            label_list = transctipt_tools.load_labels(self.file_path)
+
         for row in range(len(speaker_list)):
             self.table.setItem(row, 0, QTableWidgetItem(speaker_list[row]))
             self.table.setItem(row, 1, QTableWidgetItem(text_list[row]))
@@ -323,7 +333,22 @@ class VisTableWidget(QtWidgets.QWidget):
                 if self.vis_tab.mode == 'labeling':
                     for col in range(3, 7):
                         checkbox = QtWidgets.QCheckBox()
+                        if label_list:
+                            if row in label_list[col-3]:
+                                checkbox.setChecked(True)
                         self.table.setCellWidget(row, col, checkbox)
+
+    def save_label(self):
+        label_list = []
+        for col in range(3, 7):
+            label = []
+            for i in range(self.table.rowCount()):
+                checkbox = self.table.cellWidget(i, col)
+                if isinstance(checkbox, QtWidgets.QCheckBox):
+                    if checkbox.isChecked():
+                        label.append(i)
+            label_list.append(label)
+        transctipt_tools.save_labels(self.file_path, label_list)
 
     def set_highlight(self, row):
         row_item = self.table.item(row, 0)
