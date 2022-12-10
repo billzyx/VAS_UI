@@ -88,9 +88,14 @@ class VisTab(QtWidgets.QWidget):
             try:
                 self.table_widget = VisTableWidget(file_path[0], self)
                 self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
+                tab_name = os.path.basename(file_path[0])
+                if file_path[0].endswith('.txt'):
+                    tab_name = '{}/{}'.format(
+                        os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])
+                    )
                 self.parent_vis_widget.tabs.setTabText(
                     self.parent_vis_widget.tabs.indexOf(self),
-                    '{}/{}'.format(os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])))
+                    tab_name)
             except FileNotFoundError:
                 self.msg_box = QMessageBox()
                 self.msg_box.setIcon(QMessageBox.Warning)
