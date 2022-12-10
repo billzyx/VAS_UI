@@ -96,7 +96,7 @@ class VisTab(QtWidgets.QWidget):
                 self.parent_vis_widget.tabs.setTabText(
                     self.parent_vis_widget.tabs.indexOf(self),
                     tab_name)
-            except FileNotFoundError:
+            except:
                 self.msg_box = QMessageBox()
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
