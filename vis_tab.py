@@ -164,19 +164,21 @@ class VisTab(QtWidgets.QWidget):
         # during the playback of the audio file. The position
         # parameter indicates the current position of the
         # media player in milliseconds.
-        end_time = int(self.audio_list[self.current_audio][1])
-        if position >= end_time:
-            self.player.pause()
-            self.play_next()
+        if self.current_audio < len(self.audio_list):
+            end_time = int(self.audio_list[self.current_audio][1])
+            if position >= end_time:
+                self.player.pause()
+                self.play_next()
 
     def on_position_changed_single(self, position):
         # This callback will be called at regular intervals
         # during the playback of the audio file. The position
         # parameter indicates the current position of the
         # media player in milliseconds.
-        end_time = int(self.audio_list[self.current_audio][1])
-        if position >= end_time:
-            self.player.pause()
+        if self.current_audio < len(self.audio_list):
+            end_time = int(self.audio_list[self.current_audio][1])
+            if position >= end_time:
+                self.player.pause()
 
     def play_next(self):
         if self.current_audio >= 0:
