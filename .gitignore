@@ -4,3 +4,7 @@ NUL
 profiles
 *.log
 vas_save
+vas_final
+*.cha
+*.txt
+*.wav

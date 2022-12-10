@@ -253,13 +253,21 @@ class VisTab(QtWidgets.QWidget):
         self.play_next()
 
     def save_click(self):
-        self.table_widget.save_label()
-        self.msg_box = QMessageBox()
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.setText("Saved!")
-        self.msg_box.setStandardButtons(QMessageBox.Ok)
-        self.msg_box.show()
-        return
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Open directory")
+        if directory:
+            xls_file_path = self.table_widget.save_label()
+            cmd = 'python3 vas_toolkit/apply_labeling.py --input_dir {} --output_dir {} --label_path {}'.format(
+                os.path.dirname(os.path.dirname(self.table_widget.file_path)),
+                directory,
+                xls_file_path,
+            )
+            os.system(cmd)
+
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.setText("Saved!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
 
 
 class VisTableWidget(QtWidgets.QWidget):
@@ -348,7 +356,7 @@ class VisTableWidget(QtWidgets.QWidget):
                     if checkbox.isChecked():
                         label.append(i)
             label_list.append(label)
-        transctipt_tools.save_labels(self.file_path, label_list)
+        return transctipt_tools.save_labels(self.file_path, label_list)
 
     def set_highlight(self, row):
         row_item = self.table.item(row, 0)

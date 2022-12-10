@@ -86,6 +86,7 @@ def save_labels(txt_file_path, label_list):
     # Save the Excel file
     xls_file_path = txt_file_path.replace('.txt', '.xlsx')
     wb.save(xls_file_path)
+    return xls_file_path
 
 
 def load_labels(txt_file_path):
