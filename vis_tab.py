@@ -52,7 +52,13 @@ class VisTab(QtWidgets.QWidget):
         open_button_layout.addWidget(open_button)
 
         # create placeholder text
-        placeholder_text = QtWidgets.QLabel(".cha or .txt file")
+        if self.mode == 'visualization':
+            placeholder_text = QtWidgets.QLabel(".cha or .txt file")
+        elif self.mode == 'labeling':
+            placeholder_text = QtWidgets.QLabel(".txt file")
+        else:
+            raise ValueError('self.mode should be either visualization or labeling')
+
         placeholder_text.setObjectName("light_text")
         open_button_layout.addWidget(placeholder_text)
         open_button_layout.addStretch()
@@ -70,29 +76,35 @@ class VisTab(QtWidgets.QWidget):
         self.current_audio = 0
 
     def open_action(self):
-        file_path = QtWidgets.QFileDialog.getOpenFileName(
-            self, caption='Select .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
-        print(file_path[0])
-        try:
-            self.table_widget = VisTableWidget(file_path[0], self)
-            self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
-            self.parent_vis_widget.tabs.setTabText(
-                self.parent_vis_widget.tabs.indexOf(self),
-                '{}/{}'.format(os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])))
-        except FileNotFoundError:
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            self.msg_box.show()
-            return
-        while self.content_layout.count():
-            item = self.content_layout.takeAt(0)
-            if item.widget() is not None:
-                item.widget().deleteLater()
-            elif item.layout() is not None:
-                item.layout().deleteLater()
-        self.content_layout.addWidget(self.table_widget)
+        file_path = None
+        if self.mode == 'visualization':
+            file_path = QtWidgets.QFileDialog.getOpenFileName(
+                self, caption='Select a .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
+        elif self.mode == 'labeling':
+            file_path = QtWidgets.QFileDialog.getOpenFileName(
+                self, caption='Select a .txt file', filter='VAS Transcript Files (*.txt)')
+
+        if file_path and file_path[0]:
+            try:
+                self.table_widget = VisTableWidget(file_path[0], self)
+                self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
+                self.parent_vis_widget.tabs.setTabText(
+                    self.parent_vis_widget.tabs.indexOf(self),
+                    '{}/{}'.format(os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])))
+            except FileNotFoundError:
+                self.msg_box = QMessageBox()
+                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
+                self.msg_box.setStandardButtons(QMessageBox.Ok)
+                self.msg_box.show()
+                return
+            while self.content_layout.count():
+                item = self.content_layout.takeAt(0)
+                if item.widget() is not None:
+                    item.widget().deleteLater()
+                elif item.layout() is not None:
+                    item.layout().deleteLater()
+            self.content_layout.addWidget(self.table_widget)
 
     def play_click(self):
         if self.play_button.text() == 'Play':
