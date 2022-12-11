@@ -102,6 +102,8 @@ class VisTab(QtWidgets.QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
+                button = self.msg_box.button(QMessageBox.Ok);
+                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
             while self.content_layout.count():
@@ -286,6 +288,8 @@ class VisTab(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.setText("Saved!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
 
 
