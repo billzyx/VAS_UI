@@ -35,7 +35,7 @@ class VisTab(QtWidgets.QWidget):
 
         if mode == 'labeling':
             self.save_button = QtWidgets.QPushButton("Save")
-            self.play_button.clicked.connect(self.save_click)
+            self.save_button.clicked.connect(self.save_click)
             play_button_layout.addWidget(self.save_button)
 
         self.main_layout.addLayout(play_button_layout)
@@ -53,7 +53,13 @@ class VisTab(QtWidgets.QWidget):
         open_button_layout.addWidget(open_button)
 
         # create placeholder text
-        placeholder_text = QtWidgets.QLabel(".cha or .txt file")
+        if self.mode == 'visualization':
+            placeholder_text = QtWidgets.QLabel(".cha or .txt file")
+        elif self.mode == 'labeling':
+            placeholder_text = QtWidgets.QLabel(".txt file")
+        else:
+            raise ValueError('self.mode should be either visualization or labeling')
+
         placeholder_text.setObjectName("light_text")
         open_button_layout.addWidget(placeholder_text)
         open_button_layout.addStretch()
@@ -71,31 +77,40 @@ class VisTab(QtWidgets.QWidget):
         self.current_audio = 0
 
     def open_action(self):
-        file_path = QtWidgets.QFileDialog.getOpenFileName(
-            self, caption='Select .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
-        print(file_path[0])
-        try:
-            self.table_widget = VisTableWidget(file_path[0], self)
-            self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
-            self.parent_vis_widget.tabs.setTabText(
-                self.parent_vis_widget.tabs.indexOf(self),
-                '{}/{}'.format(os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])))
-        except FileNotFoundError:
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
-            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-            self.msg_box.show()
-            return
-        while self.content_layout.count():
-            item = self.content_layout.takeAt(0)
-            if item.widget() is not None:
-                item.widget().deleteLater()
-            elif item.layout() is not None:
-                item.layout().deleteLater()
-        self.content_layout.addWidget(self.table_widget)
+        file_path = None
+        if self.mode == 'visualization':
+            file_path = QtWidgets.QFileDialog.getOpenFileName(
+                self, caption='Select a .txt or .cha file', filter='VAS Transcript Files (*.txt *.cha)')
+        elif self.mode == 'labeling':
+            file_path = QtWidgets.QFileDialog.getOpenFileName(
+                self, caption='Select a .txt file', filter='VAS Transcript Files (*.txt)')
+
+        if file_path and file_path[0]:
+            try:
+                self.table_widget = VisTableWidget(file_path[0], self)
+                self.table_widget.table.itemDoubleClicked.connect(self.table_item_double_click_play)
+                tab_name = os.path.basename(file_path[0])
+                if file_path[0].endswith('.txt'):
+                    tab_name = '{}/{}'.format(
+                        os.path.basename(os.path.dirname(file_path[0])), os.path.basename(file_path[0])
+                    )
+                self.parent_vis_widget.tabs.setTabText(
+                    self.parent_vis_widget.tabs.indexOf(self),
+                    tab_name)
+            except:
+                self.msg_box = QMessageBox()
+                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
+                self.msg_box.setStandardButtons(QMessageBox.Ok)
+                self.msg_box.show()
+                return
+            while self.content_layout.count():
+                item = self.content_layout.takeAt(0)
+                if item.widget() is not None:
+                    item.widget().deleteLater()
+                elif item.layout() is not None:
+                    item.layout().deleteLater()
+            self.content_layout.addWidget(self.table_widget)
 
     def play_click(self):
         if self.play_button.text() == 'Play':
@@ -163,19 +178,21 @@ class VisTab(QtWidgets.QWidget):
         # during the playback of the audio file. The position
         # parameter indicates the current position of the
         # media player in milliseconds.
-        end_time = int(self.audio_list[self.current_audio][1])
-        if position >= end_time:
-            self.player.pause()
-            self.play_next()
+        if self.current_audio < len(self.audio_list):
+            end_time = int(self.audio_list[self.current_audio][1])
+            if position >= end_time:
+                self.player.pause()
+                self.play_next()
 
     def on_position_changed_single(self, position):
         # This callback will be called at regular intervals
         # during the playback of the audio file. The position
         # parameter indicates the current position of the
         # media player in milliseconds.
-        end_time = int(self.audio_list[self.current_audio][1])
-        if position >= end_time:
-            self.player.pause()
+        if self.current_audio < len(self.audio_list):
+            end_time = int(self.audio_list[self.current_audio][1])
+            if position >= end_time:
+                self.player.pause()
 
     def play_next(self):
         if self.current_audio >= 0:
@@ -254,22 +271,36 @@ class VisTab(QtWidgets.QWidget):
         self.play_button.setIcon(QtGui.QIcon("assets/images/pause-button.png"))
         self.play_next()
 
-
     def save_click(self):
-        pass
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Open directory")
+        if directory:
+            xls_file_path = self.table_widget.save_label()
+            cmd = 'python3 vas_toolkit/apply_labeling.py --input_dir {} --output_dir {} --label_path {}'.format(
+                os.path.dirname(os.path.dirname(self.table_widget.file_path)),
+                directory,
+                xls_file_path,
+            )
+            os.system(cmd)
+
+            self.msg_box = QMessageBox()
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.setText("Saved!")
+            self.msg_box.setStandardButtons(QMessageBox.Ok)
+            self.msg_box.show()
 
 
 class VisTableWidget(QtWidgets.QWidget):
-    def __init__(self, file_path, visualization_tab):
+    def __init__(self, file_path, vis_tab):
         super().__init__()
         self.setWindowTitle("Table Widget")
+
+        self.vis_tab = vis_tab
 
         self.table = QTableWidget()
         self.table.setToolTip('Double click to play')
 
-        self.load_file(file_path)
         self.file_path = file_path
-        self.visualization_tab = visualization_tab
+        self.load_file(file_path)
 
         # self.table.resizeColumnsToContents()
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -292,12 +323,26 @@ class VisTableWidget(QtWidgets.QWidget):
         self.audio_list = audio_list
 
         self.table.setRowCount(len(speaker_list))
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
+
+        if self.vis_tab.mode == 'visualization':
+            self.table.setColumnCount(3)
+            self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
+        elif self.vis_tab.mode == 'labeling':
+            self.table.setColumnCount(7)
+            self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play', 'Remove', 'Error', 'To PAR', 'To VAS'])
+        else:
+            raise ValueError('self.vis_tab.mode should be either visualization or labeling')
+
+        # Set the horizontal header labels to be always visible
+        self.table.horizontalHeader().setVisible(True)
 
         self.table.setColumnWidth(0, 150)
         self.table.setColumnWidth(1, 200)
         self.table.setColumnWidth(2, 100)
+
+        # Load labels
+        if self.vis_tab.mode == 'labeling':
+            label_list = transctipt_tools.load_labels(self.file_path)
 
         for row in range(len(speaker_list)):
             self.table.setItem(row, 0, QTableWidgetItem(speaker_list[row]))
@@ -309,8 +354,28 @@ class VisTableWidget(QtWidgets.QWidget):
                 play_btn.setIcon(QtGui.QIcon('assets/images/play-button.png'))
                 play_btn.setObjectName("play_btn")
                 play_btn.clicked.connect(
-                    lambda _, x=row: self.visualization_tab.play(x, True))
+                    lambda _, x=row: self.vis_tab.play(x, True))
                 self.table.setCellWidget(row, 2, play_btn)
+
+                if self.vis_tab.mode == 'labeling':
+                    for col in range(3, 7):
+                        checkbox = QtWidgets.QCheckBox()
+                        if label_list:
+                            if row in label_list[col-3]:
+                                checkbox.setChecked(True)
+                        self.table.setCellWidget(row, col, checkbox)
+
+    def save_label(self):
+        label_list = []
+        for col in range(3, 7):
+            label = []
+            for i in range(self.table.rowCount()):
+                checkbox = self.table.cellWidget(i, col)
+                if isinstance(checkbox, QtWidgets.QCheckBox):
+                    if checkbox.isChecked():
+                        label.append(i)
+            label_list.append(label)
+        return transctipt_tools.save_labels(self.file_path, label_list)
 
     def set_highlight(self, row):
         row_item = self.table.item(row, 0)
