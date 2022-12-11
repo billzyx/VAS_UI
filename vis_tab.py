@@ -21,12 +21,13 @@ class VisTab(QtWidgets.QWidget):
         # create play/stop button horizontal layout
         play_button_layout = QtWidgets.QHBoxLayout()
         self.play_button = QtWidgets.QPushButton("Play")
-        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
-        # self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
+        # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+        self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
         self.play_button.setObjectName("icon_btn")
         self.play_button.clicked.connect(self.play_click)
         stop_button = QtWidgets.QPushButton("Stop")
-        stop_button.setIcon(stop_button.style().standardIcon(getattr(QStyle,"SP_MediaStop")))
+        stop_button.setIcon(QtGui.QIcon("assets/images/stop-button.png"))
+        # stop_button.setIcon(stop_button.style().standardIcon(getattr(QStyle,"SP_MediaStop")))
         stop_button.setObjectName("icon_btn")
         stop_button.clicked.connect(self.stop_click)
         play_button_layout.addWidget(self.play_button)
@@ -46,7 +47,7 @@ class VisTab(QtWidgets.QWidget):
         open_button_layout.setAlignment(Qt.AlignCenter)
         open_button_layout.addStretch()
         open_button = QtWidgets.QPushButton("Open")
-        open_button.setFixedSize(200, 75)
+        # open_button.setFixedSize(200, 75)
         open_button.setStyleSheet("font-size:12pt;")
         open_button.clicked.connect(self.open_action)
         open_button_layout.addWidget(open_button)
@@ -84,6 +85,8 @@ class VisTab(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
         while self.content_layout.count():
@@ -101,17 +104,21 @@ class VisTab(QtWidgets.QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Open a file first!")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
+                button = self.msg_box.button(QMessageBox.Ok);
+                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
             self.play()
         elif self.play_button.text() == 'Pause':
             self.player.pause()
             self.play_button.setText('Continue Play')
-            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+            # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+            self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
         else:
             self.player.play()
             self.play_button.setText('Pause')
-            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPause")))
+            # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPause")))
+            self.play_button.setIcon(QtGui.QIcon("assets/images/pause-button.png"))
 
     def table_item_double_click_play(self, item):
         self.play(item.row())
@@ -119,7 +126,8 @@ class VisTab(QtWidgets.QWidget):
     def play(self, audio_idx=0, play_single_command=False):
         if play_single_command:
             self.play_button.setText('Play')
-            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
+            # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
+            self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
         try:
             if self.table_widget.file_path.endswith('.txt'):
                 self.play_txt(audio_idx, play_single_command)
@@ -130,6 +138,8 @@ class VisTab(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Cannot find the audio file!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 
@@ -140,7 +150,8 @@ class VisTab(QtWidgets.QWidget):
             self.table_widget.cancel_highlight(self.current_audio)
             self.player = None
             self.play_button.setText("Play")
-            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+            # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+            self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
 
     def on_media_status_changed(self, status):
         if status == QMediaPlayer.MediaStatus.EndOfMedia:
@@ -172,7 +183,8 @@ class VisTab(QtWidgets.QWidget):
         self.current_audio += 1
         if self.current_audio >= len(self.audio_list):
             self.play_button.setText("Play")
-            self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
+            # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPlay")))
+            self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
             return
         if not self.audio_list[self.current_audio]:
             self.play_next()
@@ -209,7 +221,8 @@ class VisTab(QtWidgets.QWidget):
             return
         self.player.mediaStatusChanged.connect(self.on_media_status_changed)
         self.play_button.setText("Pause")
-        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
+        # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
+        self.play_button.setIcon(QtGui.QIcon("assets/images/pause-button.png"))
         self.play_next()
 
     def play_cha(self, audio_idx=0, play_single_command=False):
@@ -237,7 +250,8 @@ class VisTab(QtWidgets.QWidget):
 
         self.player.positionChanged.connect(self.on_position_changed)
         self.play_button.setText("Pause")
-        self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
+        # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle, "SP_MediaPause")))
+        self.play_button.setIcon(QtGui.QIcon("assets/images/pause-button.png"))
         self.play_next()
 
 
@@ -281,9 +295,9 @@ class VisTableWidget(QtWidgets.QWidget):
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(['Speaker', 'Text', 'Play'])
 
-        self.table.setColumnWidth(0, 230)
-        self.table.setColumnWidth(1, 650)
-        self.table.setColumnWidth(2, 120)
+        self.table.setColumnWidth(0, 150)
+        self.table.setColumnWidth(1, 200)
+        self.table.setColumnWidth(2, 100)
 
         for row in range(len(speaker_list)):
             self.table.setItem(row, 0, QTableWidgetItem(speaker_list[row]))
@@ -291,8 +305,8 @@ class VisTableWidget(QtWidgets.QWidget):
             self.table.resizeRowToContents(row)
             if audio_list[row]:
                 play_btn = QPushButton("")
-                play_btn.setFixedSize(200, 40)
-                play_btn.setIcon(play_btn.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
+                # play_btn.setFixedSize(10, 4)
+                play_btn.setIcon(QtGui.QIcon('assets/images/play-button.png'))
                 play_btn.setObjectName("play_btn")
                 play_btn.clicked.connect(
                     lambda _, x=row: self.visualization_tab.play(x, True))
@@ -311,7 +325,7 @@ class VisTableWidget(QtWidgets.QWidget):
             self.table.scrollToItem(row_item, QAbstractItemView.PositionAtCenter)
 
         self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), True)
-        self.table.setStyleSheet("QTableWidget::item:selected{background-color: blue;}")
+        # self.table.setStyleSheet("QTableWidget::item:selected{background-color: #448FFF; color:#FFFFFF;}")
 
     def cancel_highlight(self, row):
         self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), False)

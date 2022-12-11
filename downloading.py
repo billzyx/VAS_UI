@@ -25,11 +25,11 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         button1 = QtWidgets.QPushButton("Add Account")
         button1.setObjectName('add_account')
-        # button1.setMinimumWidth(400)
+        button1.setMinimumWidth(200)
         button1.clicked.connect(self.add_account_click)
         button2 = QtWidgets.QPushButton("Add Session")
         button2.setObjectName('add_session')
-        # button2.setMinimumWidth(400)
+        button2.setMinimumWidth(200)
         button2.clicked.connect(self.add_session_click)
 
         self.load_accounts()
@@ -67,7 +67,7 @@ class DownloadingWidget(QtWidgets.QWidget):
         self.start_button.clicked.connect(self.start_downloading_click)
 
         self.download_status = QtWidgets.QLabel("")
-
+        self.download_status.setStyleSheet("qproperty-alignment: AlignCenter;")
         # create main layout
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addWidget(headline_label)
@@ -145,6 +145,9 @@ class DownloadingWidget(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("You need select at least one account to download!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
+            # okButton->setStyleSheet("color: white; background-color: green;");
             self.msg_box.show()
             return
 
@@ -153,6 +156,8 @@ class DownloadingWidget(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("You need select at least one session to download!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 
@@ -167,6 +172,8 @@ class DownloadingWidget(QtWidgets.QWidget):
             self.msg_box.setText("One of the session already downloaded. If you need re-download,"
                                  " please delete the corresponding fonder under your Save Directory")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 

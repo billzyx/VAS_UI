@@ -19,6 +19,7 @@ class SessionSettingsWidget(QWidget):
         self.list_widget_item = list_widget_item
 
         # create main vertical layout
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
         main_layout = QtWidgets.QVBoxLayout()
 
         # create headline
@@ -95,6 +96,8 @@ class SessionSettingsWidget(QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Session name is empty. Please put your session name!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 
@@ -104,6 +107,8 @@ class SessionSettingsWidget(QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Session name existed. Try modify the existing one at the Downloading page.")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
+                button = self.msg_box.button(QMessageBox.Ok);
+                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
 
@@ -112,6 +117,8 @@ class SessionSettingsWidget(QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("You Date to is earlier than Date from. Try a earlier Date from!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 

@@ -13,10 +13,17 @@ QLabel#select_devices_header {
 
 QListWidget::item {
     height: 50px;
+    color: #000000;
 }
 
 QListWidget::item:selected {
-    background-color: #2ABf9E;
+    color: #FFFFFF;
+    background-color: #448FFF;
+}
+
+QTableWidget::item:selected {
+    background-color: #448FFF; 
+    color:#FFFFFF;
 }
 
 QLineEdit {
@@ -95,7 +102,7 @@ QLabel#session_name_header{
 
 QPushButton {
     Background-color: #448FFF;
-    font: 75 14pt "MS Shell Dlg 2";
+    font: 75 12pt "MS Shell Dlg 2";
     color: #FFFFFF;
     padding:15px;
     border-radius: 15px;
@@ -122,8 +129,8 @@ QPushButton#select_device, QPushButton#select_dir_button{
 
 QPushButton#icon_btn{
     Background-color: Transparent;
+    color:#448FFF;
     border:  0px;
-
 }
 
 QPushButton#play_btn{
@@ -149,7 +156,14 @@ QPushButton#save_button, QPushButton#start_object_name {
     border-radius: 15px;
     border: 0px;
     margin: 50px;
+    
 }
 
 QPushButton::item:selected { color: red }
-  
+
+/* QPushButton#side_downloading, QPushButton#side_visualisation, QPushButton#side_labeling {
+    border-radius: 0px;
+    background-color: #DFECFF;
+    color:#000000;
+    font-weight: bold;
+} */

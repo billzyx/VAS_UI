@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QVBoxLayout, \
     QMessageBox
 
@@ -14,9 +14,9 @@ class AccountSettingsWidget(QWidget):
         self.downloading_widget = downloading_widget
         self.list_widget_item = list_widget_item
 
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
         self.setWindowTitle("Account Settings")
-        self.setMinimumSize(700, 950)
-        self.setMaximumSize(700, 950)
+        self.setMinimumSize(350, 500)
         # create main vertical layout
         main_layout = QtWidgets.QVBoxLayout()
 
@@ -50,6 +50,7 @@ class AccountSettingsWidget(QWidget):
         main_layout.addWidget(save_dir_header)
         save_dir_layout.addWidget(self.save_dir_textbox)
         select_dir_button = QtWidgets.QPushButton("Select Path")
+        # select_dir_button.setMinimumWidth(700)
         select_dir_button.setObjectName("select_dir_button")
         select_dir_button.clicked.connect(self.select_dir_click)
         save_dir_layout.addWidget(select_dir_button)
@@ -69,6 +70,7 @@ class AccountSettingsWidget(QWidget):
         devices_layout.addWidget(self.select_devices_list)
         # create update devices button
         update_devices_button = QtWidgets.QPushButton("Update Devices")
+        # update_devices_button.setMinimumWidth(700)
         devices_layout.addWidget(update_devices_button)
         update_devices_button.setObjectName("select_device")
         main_layout.addLayout(devices_layout)
@@ -92,6 +94,8 @@ class AccountSettingsWidget(QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Username is empty. Please put your username!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 
@@ -100,6 +104,8 @@ class AccountSettingsWidget(QWidget):
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.setText("Password is empty. Please put your password!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
+            button = self.msg_box.button(QMessageBox.Ok);
+            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
 
@@ -109,6 +115,8 @@ class AccountSettingsWidget(QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Username existed. Try modify the existing one at the Downloading page.")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
+                button = self.msg_box.button(QMessageBox.Ok);
+                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
 
