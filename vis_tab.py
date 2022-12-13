@@ -361,13 +361,13 @@ class VisTableWidget(QtWidgets.QWidget):
                     lambda _, x=row: self.vis_tab.play(x, True))
                 self.table.setCellWidget(row, 2, play_btn)
 
-                if self.vis_tab.mode == 'labeling':
-                    for col in range(3, 7):
-                        checkbox = QtWidgets.QCheckBox()
-                        if label_list:
-                            if row in label_list[col-3]:
-                                checkbox.setChecked(True)
-                        self.table.setCellWidget(row, col, checkbox)
+            if self.vis_tab.mode == 'labeling':
+                for col in range(3, 7):
+                    checkbox = QtWidgets.QCheckBox()
+                    if label_list:
+                        if row in label_list[col-3]:
+                            checkbox.setChecked(True)
+                    self.table.setCellWidget(row, col, checkbox)
 
     def save_label(self):
         label_list = []
