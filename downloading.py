@@ -195,6 +195,7 @@ class DownloadingWidget(QtWidgets.QWidget):
     def on_finished(self):
         self.start_button.setEnabled(True)  # Enable the start button
         self.download_status.setText("Downloading finished")  # Change the text of the button
+        self.download_status.setStyleSheet("color: #448FFF; font-size: 13pt;")
 
 
 class MyWorker(QtCore.QObject):

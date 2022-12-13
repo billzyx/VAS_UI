@@ -28,7 +28,7 @@ QTableWidget::item:selected {
 
 QLineEdit {
     font-size:12pt;
-    padding: 15px;
+    padding: 5px;
     background-color:rgb(246, 251, 255)
 }
 
@@ -38,7 +38,7 @@ QLineEdit#session_name_editor{
 
 QComboBox, QDateTimeEdit {
     font-size: 12pt;
-    padding: 15px;
+    padding: 5px;
     background-color:rgb(246, 251, 255)
 }
 
@@ -120,10 +120,10 @@ QPushButton#select_device, QPushButton#select_dir_button{
     Background-color: #448FFF;
     font: 75 12pt "MS Shell Dlg 2";
     color: #FFFFFF;
-    padding:10px;
+    padding:8px;
     border-radius: 10px;
-    min-width: 200px;
-    max-width: 200px;
+    min-width: 180px;
+    max-width: 180px;
 }
 
 
