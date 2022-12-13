@@ -21,20 +21,23 @@ class VisTab(QtWidgets.QWidget):
         # create play/stop button horizontal layout
         play_button_layout = QtWidgets.QHBoxLayout()
         self.play_button = QtWidgets.QPushButton("Play")
+        self.play_button.setDisabled(True)
         # self.play_button.setIcon(self.play_button.style().standardIcon(getattr(QStyle,"SP_MediaPlay")))
         self.play_button.setIcon(QtGui.QIcon('assets/images/play-button.png'))
         self.play_button.setObjectName("icon_btn")
         self.play_button.clicked.connect(self.play_click)
-        stop_button = QtWidgets.QPushButton("Stop")
-        stop_button.setIcon(QtGui.QIcon("assets/images/stop-button.png"))
+        self.stop_button = QtWidgets.QPushButton("Stop")
+        self.stop_button.setDisabled(True)
+        self.stop_button.setIcon(QtGui.QIcon("assets/images/stop-button.png"))
         # stop_button.setIcon(stop_button.style().standardIcon(getattr(QStyle,"SP_MediaStop")))
-        stop_button.setObjectName("icon_btn")
-        stop_button.clicked.connect(self.stop_click)
+        self.stop_button.setObjectName("icon_btn")
+        self.stop_button.clicked.connect(self.stop_click)
         play_button_layout.addWidget(self.play_button)
-        play_button_layout.addWidget(stop_button)
+        play_button_layout.addWidget(self.stop_button)
 
         if mode == 'labeling':
             self.save_button = QtWidgets.QPushButton("Save")
+            self.save_button.setDisabled(True)
             self.save_button.clicked.connect(self.save_click)
             play_button_layout.addWidget(self.save_button)
 
@@ -112,6 +115,10 @@ class VisTab(QtWidgets.QWidget):
                     item.widget().deleteLater()
                 elif item.layout() is not None:
                     item.layout().deleteLater()
+            self.play_button.setDisabled(False)
+            self.stop_button.setDisabled(False)
+            if self.mode == 'labeling':
+                self.save_button.setDisabled(False)
             self.content_layout.addWidget(self.table_widget)
 
     def play_click(self):
