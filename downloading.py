@@ -215,7 +215,7 @@ class MyWorker(QtCore.QObject):
         for i, config_file_path in enumerate(self.config_file_path_list):
             if i > 0:
                 sleep(10)
-            cmd = 'python3 vas_toolkit/alexa.py --config_file_path {}'.format(config_file_path)
+            cmd = 'python3 vas_toolkit/alexa.py --config_file_path "{}"'.format(config_file_path)
             os.system(cmd)
             self.update_progress.emit(i + 1)
         self.finished.emit()
