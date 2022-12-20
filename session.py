@@ -27,15 +27,27 @@ class SessionSettingsWidget(QWidget):
         main_layout.addWidget(headline)
         headline.setObjectName("session_headline")
 
+        def remove_error_session_name():
+            if self.session_name_textbox.text():
+                self.session_name_error_label.setText('')
+
         # create session_name header and textbox
         session_name_header = QtWidgets.QLabel("Session name")
         # session_name_header.setObjectName('session_name_header')
         self.session_name_textbox = QtWidgets.QLineEdit()
         self.session_name_textbox.setObjectName('session_name_editor')
         self.session_name_textbox.setText('{}_new_session'.format(datetime.today().strftime("%Y-%m-%d-%H-%M-%S")))
+        self.session_name_textbox.textChanged.connect(remove_error_session_name)
+        self.session_name_error_label = QLabel()
+        self.session_name_error_label.setStyleSheet("color: red")
         main_layout.addWidget(session_name_header)
         session_name_header.setObjectName("session_name_header")
         main_layout.addWidget(self.session_name_textbox)
+        main_layout.addWidget(self.session_name_error_label)
+
+        def remove_error_date():
+            if self.date_from_box.dateTime() < self.date_to_box.dateTime():
+                self.date_name_error_label.setText('')
 
         # create date from layout
         # date_from_layout = QtWidgets.QHBoxLayout()
@@ -43,6 +55,7 @@ class SessionSettingsWidget(QWidget):
         date_from_label.setObjectName('date_from_label')
         self.date_from_box = QtWidgets.QDateTimeEdit(calendarPopup=True)
         self.date_from_box.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.date_from_box.dateTimeChanged.connect(remove_error_date)
         main_layout.addWidget(date_from_label)
         main_layout.addWidget(self.date_from_box)
         # main_layout.addLayout(date_from_layout)
@@ -53,8 +66,12 @@ class SessionSettingsWidget(QWidget):
         date_to_label.setObjectName('date_to_label')
         self.date_to_box = QtWidgets.QDateTimeEdit(calendarPopup=True)
         self.date_to_box.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.date_to_box.dateTimeChanged.connect(remove_error_date)
+        self.date_name_error_label = QLabel()
+        self.date_name_error_label.setStyleSheet("color: red")
         main_layout.addWidget(date_to_label)
         main_layout.addWidget(self.date_to_box)
+        main_layout.addWidget(self.date_name_error_label)
         # main_layout.addLayout(date_to_layout)
 
         # create save date and time checkbox layout
@@ -91,36 +108,46 @@ class SessionSettingsWidget(QWidget):
             self.load_session()
 
     def save_click(self):
+
+        self.session_name_error_label.setText('')
+        self.date_name_error_label.setText('')
+
         if not self.session_name_textbox.text():
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Session name is empty. Please put your session name!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
-            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-            self.msg_box.show()
+            self.session_name_error_label.setText('Session name is empty. Please put your session name!')
             return
+            # self.msg_box = QMessageBox()
+            # self.msg_box.setIcon(QMessageBox.Warning)
+            # self.msg_box.setText("Session name is empty. Please put your session name!")
+            # self.msg_box.setStandardButtons(QMessageBox.Ok)
+            # button = self.msg_box.button(QMessageBox.Ok);
+            # button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
+            # self.msg_box.show()
+            # return
 
         if not self.list_widget_item:
             if config_tool.check_session_exist(self.session_name_textbox.text()):
-                self.msg_box = QMessageBox()
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.setText("Session name existed. Try modify the existing one at the Downloading page.")
-                self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok);
-                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-                self.msg_box.show()
+                self.session_name_error_label.setText('Session name existed. Try modify the existing one at the Downloading page.')
                 return
+                # self.msg_box = QMessageBox()
+                # self.msg_box.setIcon(QMessageBox.Warning)
+                # self.msg_box.setText("Session name existed. Try modify the existing one at the Downloading page.")
+                # self.msg_box.setStandardButtons(QMessageBox.Ok)
+                # button = self.msg_box.button(QMessageBox.Ok);
+                # button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
+                # self.msg_box.show()
+                # return
 
         if self.date_from_box.dateTime() > self.date_to_box.dateTime():
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("You Date to is earlier than Date from. Try a earlier Date from!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
-            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-            self.msg_box.show()
+            self.date_name_error_label.setText("Your Date to is earlier than Date from. Try a earlier Date from!")
             return
+            # self.msg_box = QMessageBox()
+            # self.msg_box.setIcon(QMessageBox.Warning)
+            # self.msg_box.setText("You Date to is earlier than Date from. Try a earlier Date from!")
+            # self.msg_box.setStandardButtons(QMessageBox.Ok)
+            # button = self.msg_box.button(QMessageBox.Ok);
+            # button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
+            # self.msg_box.show()
+            # return
 
         if self.list_widget_item:
             config_tool.delete_session(self.session)

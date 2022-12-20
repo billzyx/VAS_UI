@@ -25,27 +25,38 @@ class AccountSettingsWidget(QWidget):
         headline.setObjectName("headline")
         main_layout.addWidget(headline)
 
+        def remove_error_username():
+            if self.username_textbox.text():
+                self.username_error_label.setText('')
+
+
         # create username header and textbox
         username_header = QtWidgets.QLabel("Username")
         self.username_textbox = QtWidgets.QLineEdit()
         self.username_textbox.setPlaceholderText("Username")
+        self.username_textbox.textChanged.connect(remove_error_username)
         self.username_error_label = QLabel()
         self.username_error_label.setStyleSheet("color: red")
         username_header.setObjectName("username_label")
         main_layout.addWidget(username_header)
-        main_layout.addWidget(self.username_error_label)
         main_layout.addWidget(self.username_textbox)
+        main_layout.addWidget(self.username_error_label)
+
+        def remove_error_password():
+            if self.password_textbox.text():
+                self.password_error_label.setText('')
 
         # create password header and textbox
         password_header = QtWidgets.QLabel("Password")
         password_header.setObjectName("password_label")
         self.password_textbox = QtWidgets.QLineEdit()
         self.password_textbox.setPlaceholderText("Password")
+        self.password_textbox.textChanged.connect(remove_error_password)
         self.password_error_label = QLabel()
         self.password_error_label.setStyleSheet("color: red")
         main_layout.addWidget(password_header)
-        main_layout.addWidget(self.password_error_label)
         main_layout.addWidget(self.password_textbox)
+        main_layout.addWidget(self.password_error_label)
 
         save_dir_layout = QtWidgets.QHBoxLayout()
         # create save directory header and textbox
@@ -93,6 +104,8 @@ class AccountSettingsWidget(QWidget):
         if self.list_widget_item:
             self.account = self.list_widget_item.text()
             self.load_account()
+    
+    
 
     def save_click(self):
         self.username_error_label.setText('')
