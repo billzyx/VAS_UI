@@ -50,6 +50,7 @@ class VisTab(QtWidgets.QWidget):
             self.save_button = QtWidgets.QPushButton("Save && Export")
             self.save_button.setDisabled(True)
             self.save_button.clicked.connect(self.save_click)
+            self.save_button.setToolTip('Save labeling and select a folder to export')
             play_button_layout.addWidget(self.save_button)
 
         self.main_layout.addLayout(play_button_layout)
