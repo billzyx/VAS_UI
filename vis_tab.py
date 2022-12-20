@@ -35,15 +35,19 @@ class VisTab(QtWidgets.QWidget):
         play_button_layout.addWidget(self.play_button)
         play_button_layout.addWidget(self.stop_button)
 
-        self.text_size_up_button = QtWidgets.QPushButton("text size +")
+        self.text_size_up_button = QtWidgets.QPushButton("Text Size")
         self.text_size_up_button.setDisabled(True)
-        self.text_size_down_button = QtWidgets.QPushButton("text size -")
+        self.text_size_up_button.setIcon(QtGui.QIcon('assets/images/add.png'))
+        self.text_size_up_button.setObjectName("icon_btn")
+        self.text_size_down_button = QtWidgets.QPushButton("Text Size")
         self.text_size_down_button.setDisabled(True)
+        self.text_size_down_button.setIcon(QtGui.QIcon('assets/images/minus.png'))
+        self.text_size_down_button.setObjectName("icon_btn")
         play_button_layout.addWidget(self.text_size_up_button)
         play_button_layout.addWidget(self.text_size_down_button)
 
         if mode == 'labeling':
-            self.save_button = QtWidgets.QPushButton("Save & Export")
+            self.save_button = QtWidgets.QPushButton("Save && Export")
             self.save_button.setDisabled(True)
             self.save_button.clicked.connect(self.save_click)
             play_button_layout.addWidget(self.save_button)

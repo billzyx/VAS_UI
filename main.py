@@ -10,7 +10,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         # Set window properties
         self.setWindowTitle("VAS Tool Box")
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(850, 600)
 
         # Create a widget for the main content area
         self.main_widget = QtWidgets.QWidget()
