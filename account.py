@@ -28,17 +28,23 @@ class AccountSettingsWidget(QWidget):
         # create username header and textbox
         username_header = QtWidgets.QLabel("Username")
         self.username_textbox = QtWidgets.QLineEdit()
-        self.username_textbox.setPlaceholderText("Userame")
+        self.username_textbox.setPlaceholderText("Username")
+        self.username_error_label = QLabel()
+        self.username_error_label.setStyleSheet("color: red")
         username_header.setObjectName("username_label")
         main_layout.addWidget(username_header)
+        main_layout.addWidget(self.username_error_label)
         main_layout.addWidget(self.username_textbox)
 
         # create password header and textbox
         password_header = QtWidgets.QLabel("Password")
         password_header.setObjectName("password_label")
         self.password_textbox = QtWidgets.QLineEdit()
-        self.password_textbox.setPlaceholderText("Password");
+        self.password_textbox.setPlaceholderText("Password")
+        self.password_error_label = QLabel()
+        self.password_error_label.setStyleSheet("color: red")
         main_layout.addWidget(password_header)
+        main_layout.addWidget(self.password_error_label)
         main_layout.addWidget(self.password_textbox)
 
         save_dir_layout = QtWidgets.QHBoxLayout()
@@ -89,35 +95,20 @@ class AccountSettingsWidget(QWidget):
             self.load_account()
 
     def save_click(self):
+        self.username_error_label.setText('')
+        self.password_error_label.setText('')
+
         if not self.username_textbox.text():
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Username is empty. Please put your username!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
-            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-            self.msg_box.show()
+            self.username_error_label.setText('Username is empty. Please put your username!')
             return
 
-        elif not self.password_textbox.text():
-            self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.setText("Password is empty. Please put your password!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
-            button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-            self.msg_box.show()
+        if not self.password_textbox.text():
+            self.password_error_label.setText('Password is empty. Please put your password!')
             return
 
         if not self.list_widget_item:
             if config_tool.check_account_exist(self.username_textbox.text()):
-                self.msg_box = QMessageBox()
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.setText("Username existed. Try modify the existing one at the Downloading page.")
-                self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok);
-                button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
-                self.msg_box.show()
+                self.username_error_label.setText('Username existed. Try modify the existing one at the Downloading page.')
                 return
 
         if self.list_widget_item:
