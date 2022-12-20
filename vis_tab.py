@@ -35,6 +35,13 @@ class VisTab(QtWidgets.QWidget):
         play_button_layout.addWidget(self.play_button)
         play_button_layout.addWidget(self.stop_button)
 
+        self.text_size_up_button = QtWidgets.QPushButton("text size +")
+        self.text_size_up_button.setDisabled(True)
+        self.text_size_down_button = QtWidgets.QPushButton("text size -")
+        self.text_size_down_button.setDisabled(True)
+        play_button_layout.addWidget(self.text_size_up_button)
+        play_button_layout.addWidget(self.text_size_down_button)
+
         if mode == 'labeling':
             self.save_button = QtWidgets.QPushButton("Save")
             self.save_button.setDisabled(True)
@@ -105,7 +112,7 @@ class VisTab(QtWidgets.QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok);
+                button = self.msg_box.button(QMessageBox.Ok)
                 button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
@@ -117,6 +124,10 @@ class VisTab(QtWidgets.QWidget):
                     item.layout().deleteLater()
             self.play_button.setDisabled(False)
             self.stop_button.setDisabled(False)
+            self.text_size_up_button.setDisabled(False)
+            self.text_size_down_button.setDisabled(False)
+            self.text_size_up_button.clicked.connect(self.table_widget.text_size_up)
+            self.text_size_down_button.clicked.connect(self.table_widget.text_size_down)
             if self.mode == 'labeling':
                 self.save_button.setDisabled(False)
             self.content_layout.addWidget(self.table_widget)
@@ -128,7 +139,7 @@ class VisTab(QtWidgets.QWidget):
                 self.msg_box.setIcon(QMessageBox.Warning)
                 self.msg_box.setText("Open a file first!")
                 self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok);
+                button = self.msg_box.button(QMessageBox.Ok)
                 button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
@@ -295,7 +306,7 @@ class VisTab(QtWidgets.QWidget):
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.setText("Saved!")
             self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
+            button = self.msg_box.button(QMessageBox.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
 
@@ -309,6 +320,9 @@ class VisTableWidget(QtWidgets.QWidget):
 
         self.table = QTableWidget()
         self.table.setToolTip('Double click to play')
+
+        self.text_size = 16
+        self.set_text_size(self.text_size)
 
         self.file_path = file_path
         self.load_file(file_path)
@@ -405,3 +419,14 @@ class VisTableWidget(QtWidgets.QWidget):
 
     def cancel_highlight(self, row):
         self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), False)
+
+    def set_text_size(self, text_size):
+        self.text_size = text_size
+        self.table.setStyleSheet("font-size: {}px;".format(self.text_size))
+        self.table.resizeRowsToContents()
+
+    def text_size_up(self):
+        self.set_text_size(self.text_size + 1)
+
+    def text_size_down(self):
+        self.set_text_size(self.text_size - 1)
