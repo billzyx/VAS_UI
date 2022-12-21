@@ -8,3 +8,7 @@ vas_final
 *.cha
 *.txt
 *.wav
+build
+dist
+*.spec
+.eggs

@@ -50,6 +50,7 @@ class VisTab(QtWidgets.QWidget):
             self.save_button = QtWidgets.QPushButton("Save && Export")
             self.save_button.setDisabled(True)
             self.save_button.clicked.connect(self.save_click)
+            self.save_button.setToolTip('Save labeling and select a folder to export')
             play_button_layout.addWidget(self.save_button)
 
         self.main_layout.addLayout(play_button_layout)
@@ -299,7 +300,7 @@ class VisTab(QtWidgets.QWidget):
         directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Open directory")
         if directory:
             xls_file_path = self.table_widget.save_label()
-            cmd = 'python3 vas_toolkit/apply_labeling.py --input_dir {} --output_dir {} --label_path {}'.format(
+            cmd = 'python3 vas_toolkit/apply_labeling.py --input_dir "{}" --output_dir "{}" --label_path "{}"'.format(
                 os.path.dirname(os.path.dirname(self.table_widget.file_path)),
                 directory,
                 xls_file_path,
