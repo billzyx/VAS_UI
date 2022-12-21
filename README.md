@@ -10,7 +10,6 @@ Welcome to the VAS Tool Box! This application allows you to download, visualize,
   * [Data Downloading](#data-downloading)
   * [Data Visualization](#data-visualization)
   * [Labelling](#labelling)
-- [FAQs](#faqs)
 
 ## Introduction
 
@@ -88,16 +87,3 @@ The goal of this task is to delete useless commands (e.g., example commands prov
    2. Select save location
    3. Click "save"
 
-## FAQs
-
-- Q. Who can use this application?
-  A. Anyone who owns or has an Alexa device can use this application to download and process the data that they have given to the device.
-
-- Q. Can I, a regular user do the task of labeling?
-  A. Unfortunately, only users doing research work has to access to the labeling section as it can be confusing to regular users.
-
-- Q. Can I save the downloaded data in a pdf file?
-  A. Unfortunately, you can only save data in two file formats, the .txt or the .cha format in order to visualize or label the data.
-
-- Q. Can I save the transcripts to any custom folder on my system?
-  A. Yes, you can save the data to any folder you want on your system by clicking on the "Save" button and then specifying the directory where you want your data to get saved.
