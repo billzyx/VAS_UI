@@ -19,10 +19,13 @@ class SidebarWidget(QtWidgets.QWidget):
 
         # Add a vertical layout to the sidebar for the buttons
         self.sidebar_button_layout = QtWidgets.QVBoxLayout()
+        self.sidebar_link_layout = QtWidgets.QVBoxLayout()
         self.sidebar_layout.addLayout(self.sidebar_button_layout)
+        self.sidebar_layout.addLayout(self.sidebar_link_layout)
 
         # Set the alignment of the buttons to top-aligned
         self.sidebar_button_layout.setAlignment(QtCore.Qt.AlignTop)
+        self.sidebar_link_layout.setAlignment(QtCore.Qt.AlignBottom)
 
         def to_downloading():
             self.main_content_widget.set_widget(self.downloading_widget)
@@ -56,6 +59,16 @@ class SidebarWidget(QtWidgets.QWidget):
         # self.button_labeling.setMinimumWidth(100)
         self.button_labeling.clicked.connect(to_labeling)
         self.sidebar_button_layout.addWidget(self.button_labeling)
+
+        self.label = QtWidgets.QLabel("<a href='https://www.github.com/billzyx/VAS_UI'>About</a>")
+        self.vlabel = QtWidgets.QLabel("Version: 1.0.0")
+        self.label.setOpenExternalLinks(True)
+        self.vlabel.setOpenExternalLinks(True)
+        self.label.show()
+        self.vlabel.show()
+        # self.sidebar_button_layout.setAlignment(QtCore.Qt.AlignTop)
+        self.sidebar_link_layout.addWidget(self.label)
+        self.sidebar_link_layout.addWidget(self.vlabel)
 
         # Add some styling to the buttons
         self.button_downloading.setStyleSheet("background-color: #448FFF; color: white; font-size: 13pt; padding: 10px; font-weight: bold;")
