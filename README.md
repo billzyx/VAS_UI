@@ -10,6 +10,7 @@ Welcome to the VAS Tool Box! This application allows you to download, visualize,
   * [Data Downloading](#data-downloading)
   * [Data Visualization](#data-visualization)
   * [Labelling](#labelling)
+- [Screenshots](#screenshots)
 
 ## Introduction
 
@@ -86,4 +87,13 @@ The goal of this task is to delete useless commands (e.g., example commands prov
    1. Click "save & export"
    2. Select save location
    3. Click "save"
+
+## Screenshots
+
+- Downloading
+   ![Downloading](screenshots/downloading.png)
+- Visualization
+   ![Visualization](screenshots/visualization.png)
+- Labeling
+   ![Labeling](screenshots/labeling.png)
 
