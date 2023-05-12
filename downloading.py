@@ -1,8 +1,8 @@
 import os
 from time import sleep
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QThread, QObject, pyqtSignal
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import Qt, QThread, QObject, pyqtSignal
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QMessageBox
 
 from account import AccountSettingsWidget
 from session import SessionSettingsWidget
@@ -110,8 +110,8 @@ class DownloadingWidget(QtWidgets.QWidget):
         # add checkboxes to list widgets
         for account in account_list:
             item1 = QtWidgets.QListWidgetItem()
-            item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item1.setCheckState(QtCore.Qt.Unchecked)
+            item1.setFlags(item1.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item1.setCheckState(Qt.CheckState.Unchecked)
             item1.setText(account['account'])
             self.list_widget_account.addItem(item1)
 
@@ -121,20 +121,20 @@ class DownloadingWidget(QtWidgets.QWidget):
         # add checkboxes to list widgets
         for session in session_list:
             item1 = QtWidgets.QListWidgetItem()
-            item1.setFlags(item1.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item1.setCheckState(QtCore.Qt.Unchecked)
+            item1.setFlags(item1.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+            item1.setCheckState(QtCore.Qt.CheckState.Unchecked)
             item1.setText(session['session_name'])
             self.list_widget_session.addItem(item1)
 
     def start_downloading_click(self):
         account_list = []
         for index in range(self.list_widget_account.count()):
-            if self.list_widget_account.item(index).checkState() == Qt.Checked:
+            if self.list_widget_account.item(index).checkState() == Qt.CheckState.Checked:
                 account_list.append(config_tool.load_account(self.list_widget_account.item(index).text()))
 
         session_list = []
         for index in range(self.list_widget_session.count()):
-            if self.list_widget_session.item(index).checkState() == Qt.Checked:
+            if self.list_widget_session.item(index).checkState() == Qt.CheckState.Checked:
                 session_list.append(config_tool.load_session(self.list_widget_session.item(index).text()))
 
         print(account_list)
@@ -142,10 +142,10 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         if not account_list:
             self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setIcon(QMessageBox.Icon.Warning)
             self.msg_box.setText("You need select at least one account to download!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
+            self.msg_box.setStandardButtons(QMessageBox.Icon.Ok)
+            button = self.msg_box.button(QMessageBox.Icon.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             # okButton->setStyleSheet("color: white; background-color: green;");
             self.msg_box.show()
@@ -153,10 +153,10 @@ class DownloadingWidget(QtWidgets.QWidget):
 
         if not session_list:
             self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setIcon(QMessageBox.Icon.Warning)
             self.msg_box.setText("You need select at least one session to download!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
+            self.msg_box.setStandardButtons(QMessageBox.Icon.Ok)
+            button = self.msg_box.button(QMessageBox.Icon.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
@@ -164,15 +164,15 @@ class DownloadingWidget(QtWidgets.QWidget):
         config_file_path_list = config_tool.generate_download_configs(account_list, session_list)
 
         if config_tool.check_downloading_exist(config_file_path_list):
-            self.progress_bar.setVisible(1)
+            self.progress_bar.setVisible(True)
             self.start_download(config_file_path_list)
         else:
             self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setIcon(QMessageBox.Icon.Warning)
             self.msg_box.setText("One of the session already downloaded. If you need re-download,"
                                  " please delete the corresponding fonder under your Save Directory")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
+            self.msg_box.setStandardButtons(QMessageBox.Icon.Ok)
+            button = self.msg_box.button(QMessageBox.Icon.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
@@ -226,7 +226,7 @@ class AccountSessionQListWidget(QListWidget):
         super().__init__()
 
         self.setToolTip('Double click to modify')
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_right_click_list_widget)
         self.itemDoubleClicked.connect(modify_click)
         self.delete_function = delete_click
@@ -246,14 +246,16 @@ class AccountSessionQListWidget(QListWidget):
         option1 = menu.addAction("Delete")
 
         # Show the context menu
-        action = menu.exec_(self.viewport().mapToGlobal(pos))
+        action = menu.exec(self.viewport().mapToGlobal(pos))
 
         if action == option1:  # If the user selected option 1
             print("Selected for item:", text)
-            result = QMessageBox.question(None, "Confirmation", "Are you sure to delete {} ?".format(text),
-                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            result = QMessageBox.question(None, "Confirmation",
+                                          "Are you sure to delete {} ?".format(text),
+                                          QMessageBox.StandardButtons.Yes | QMessageBox.StandardButtons.No,
+                                          QMessageBox.StandardButtons.No)
 
             # Check the result of the dialog and act accordingly.
-            if result == QMessageBox.Yes:
+            if result == QMessageBox.StandardButton.Yes:
                 self.delete_function(text)
 

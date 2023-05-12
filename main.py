@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication
 
 from downloading import DownloadingWidget
 from sidebar import SidebarWidget
@@ -52,12 +52,12 @@ class MainContentWidget(QtWidgets.QWidget):
 
 
 if __name__ == '__main__':
-    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
-    QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
+    # QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
+    # QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
     app = QApplication([])
     window = MainWindow()
     window.show()
     with open("style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
-    app.exec_()
+    app.exec()

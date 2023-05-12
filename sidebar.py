@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore, QtGui
 
 from labeling import LabelingWidget
 from visualization import VisualizationWidget
@@ -24,8 +24,8 @@ class SidebarWidget(QtWidgets.QWidget):
         self.sidebar_layout.addLayout(self.sidebar_link_layout)
 
         # Set the alignment of the buttons to top-aligned
-        self.sidebar_button_layout.setAlignment(QtCore.Qt.AlignTop)
-        self.sidebar_link_layout.setAlignment(QtCore.Qt.AlignBottom)
+        self.sidebar_button_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
+        self.sidebar_link_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom)
 
         def to_downloading():
             self.main_content_widget.set_widget(self.downloading_widget)
@@ -61,7 +61,7 @@ class SidebarWidget(QtWidgets.QWidget):
         self.sidebar_button_layout.addWidget(self.button_labeling)
 
         self.label = QtWidgets.QLabel("<a href='https://www.github.com/billzyx/VAS_UI'>About</a>")
-        self.vlabel = QtWidgets.QLabel("Version: 1.0.0")
+        self.vlabel = QtWidgets.QLabel("Version: 2.0.0")
         self.label.setOpenExternalLinks(True)
         self.vlabel.setOpenExternalLinks(True)
         self.label.show()

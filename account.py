@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QVBoxLayout, \
+from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QVBoxLayout, \
     QMessageBox
 
 import config_tool
@@ -14,7 +14,7 @@ class AccountSettingsWidget(QWidget):
         self.downloading_widget = downloading_widget
         self.list_widget_item = list_widget_item
 
-        self.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
         self.setWindowTitle("Account Settings")
         self.setMinimumSize(350, 500)
         # create main vertical layout
@@ -159,4 +159,4 @@ if __name__ == "__main__":
     with open("style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -1,8 +1,8 @@
 import os
-from PyQt5 import QtGui, QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, \
+from PyQt6 import QtGui, QtWidgets, QtCore
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QHBoxLayout, QTabWidget, QWidget, \
     QTableWidget, QTableWidgetItem, QCheckBox, QMessageBox, QAbstractItemView, QTableWidgetSelectionRange, QStyle
 
 import transctipt_tools
@@ -59,7 +59,7 @@ class VisTab(QtWidgets.QWidget):
         self.content_layout = QtWidgets.QVBoxLayout()
         self.content_layout.addStretch()
         open_button_layout = QtWidgets.QVBoxLayout()
-        open_button_layout.setAlignment(Qt.AlignCenter)
+        open_button_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         open_button_layout.addStretch()
         open_button = QtWidgets.QPushButton("Open")
         # open_button.setFixedSize(200, 75)
@@ -86,10 +86,27 @@ class VisTab(QtWidgets.QWidget):
         # set main layout
         self.setLayout(self.main_layout)
 
-        self.player = QMediaPlayer()
+        self.player = None
+        self.player = self.create_player()
         self.table_widget = None
         self.audio_list = []
         self.current_audio = 0
+
+    def create_player(self):
+        if self.player:
+            self.player.stop()
+            self.player.deleteLater()
+        self.player = QMediaPlayer()
+        self.audio_output = QAudioOutput()
+        self.audio_output.setVolume(50)
+        self.player.setAudioOutput(self.audio_output)
+        return self.player
+
+    def closeEvent(self, event):
+        if self.player:
+            self.player.stop()
+            self.player.deleteLater()
+        event.accept()
 
     def open_action(self):
         file_path = None
@@ -114,10 +131,10 @@ class VisTab(QtWidgets.QWidget):
                     tab_name)
             except:
                 self.msg_box = QMessageBox()
-                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setIcon(QMessageBox.Icon.Warning)
                 self.msg_box.setText("Load failed. Check if it is a VAS transcript file!")
-                self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok)
+                self.msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                button = self.msg_box.button(QMessageBox.StandardButton.Ok)
                 button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
@@ -141,10 +158,10 @@ class VisTab(QtWidgets.QWidget):
         if self.play_button.text() == 'Play':
             if not self.table_widget:
                 self.msg_box = QMessageBox()
-                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.setIcon(QMessageBox.Icon.Warning)
                 self.msg_box.setText("Open a file first!")
-                self.msg_box.setStandardButtons(QMessageBox.Ok)
-                button = self.msg_box.button(QMessageBox.Ok)
+                self.msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                button = self.msg_box.button(QMessageBox.StandardButton.Ok)
                 button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
                 self.msg_box.show()
                 return
@@ -175,10 +192,10 @@ class VisTab(QtWidgets.QWidget):
                 self.play_cha(audio_idx, play_single_command)
         except FileNotFoundError:
             self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.setIcon(QMessageBox.Icon.Warning)
             self.msg_box.setText("Cannot find the audio file!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok);
+            self.msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            button = self.msg_box.button(QMessageBox.StandardButton.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
             return
@@ -196,6 +213,7 @@ class VisTab(QtWidgets.QWidget):
     def on_media_status_changed(self, status):
         if status == QMediaPlayer.MediaStatus.EndOfMedia:
             # Set the next audio file to play
+            self.player.stop()
             self.play_next()
 
     def on_position_changed(self, position):
@@ -233,7 +251,7 @@ class VisTab(QtWidgets.QWidget):
             return
 
         if self.table_widget.file_path.endswith('.txt'):
-            self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_list[self.current_audio])))
+            self.player.setSource(QUrl.fromLocalFile(self.audio_list[self.current_audio]))
         else:
             # play .cha
             start_time = int(self.audio_list[self.current_audio][0])
@@ -245,9 +263,9 @@ class VisTab(QtWidgets.QWidget):
         self.player.play()
 
     def play_txt(self, audio_idx=0, play_single_command=False):
+        self.player = self.create_player()
         self.audio_list = []
         self.current_audio = audio_idx - 1
-        self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
                 audio_path = os.path.join(os.path.dirname(self.table_widget.file_path), 'audio', audio)
@@ -258,7 +276,7 @@ class VisTab(QtWidgets.QWidget):
                 self.audio_list.append(None)
         if play_single_command:
             self.current_audio += 1
-            self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.audio_list[self.current_audio])))
+            self.player.setSource(QUrl.fromLocalFile(self.audio_list[self.current_audio]))
             self.player.play()
             return
         self.player.mediaStatusChanged.connect(self.on_media_status_changed)
@@ -268,9 +286,9 @@ class VisTab(QtWidgets.QWidget):
         self.play_next()
 
     def play_cha(self, audio_idx=0, play_single_command=False):
+        self.player = self.create_player()
         self.audio_list = []
         self.current_audio = audio_idx - 1
-        self.player = QMediaPlayer()
         for idx, audio in enumerate(self.table_widget.audio_list):
             if audio:
                 self.audio_list.append(audio.split('_'))
@@ -279,8 +297,8 @@ class VisTab(QtWidgets.QWidget):
         audio_file_path = self.table_widget.file_path.replace('.cha', '.wav')
         if not os.path.isfile(audio_file_path):
             raise FileNotFoundError
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(audio_file_path)))
-        self.player.setNotifyInterval(10)
+        self.player.setSource(QUrl.fromLocalFile(audio_file_path))
+        self.player.timer_interval = 10
 
         if play_single_command:
             self.current_audio += 1
@@ -308,10 +326,10 @@ class VisTab(QtWidgets.QWidget):
             os.system(cmd)
 
             self.msg_box = QMessageBox()
-            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.setIcon(QMessageBox.Icon.Information)
             self.msg_box.setText("Saved!")
-            self.msg_box.setStandardButtons(QMessageBox.Ok)
-            button = self.msg_box.button(QMessageBox.Ok)
+            self.msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+            button = self.msg_box.button(QMessageBox.StandardButton.Ok)
             button.setStyleSheet("width: 50px; height:20px;padding:0px;margin:0px;font-size:10pt;")
             self.msg_box.show()
 
@@ -333,7 +351,7 @@ class VisTableWidget(QtWidgets.QWidget):
         self.load_file(file_path)
 
         # self.table.resizeColumnsToContents()
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
         self.table.horizontalHeader().setStretchLastSection(True)
 
@@ -417,7 +435,7 @@ class VisTableWidget(QtWidgets.QWidget):
 
         # Check if the top and bottom coordinates of the row are within the bounds of the viewport
         if not (rect.top() >= viewport.top() and rect.bottom() <= viewport.bottom()):
-            self.table.scrollToItem(row_item, QAbstractItemView.PositionAtCenter)
+            self.table.scrollToItem(row_item, QAbstractItemView.ScrollHint.PositionAtCenter)
 
         self.table.setRangeSelected(QTableWidgetSelectionRange(row, 0, row, self.table.columnCount() - 1), True)
         # self.table.setStyleSheet("QTableWidget::item:selected{background-color: #448FFF; color:#FFFFFF;}")

@@ -1,8 +1,8 @@
 import sys
 from datetime import datetime
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QVBoxLayout, \
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QComboBox, QPushButton, QHBoxLayout, QVBoxLayout, \
     QMessageBox
 
 import config_tool
@@ -19,7 +19,7 @@ class SessionSettingsWidget(QWidget):
         self.list_widget_item = list_widget_item
 
         # create main vertical layout
-        self.setWindowModality(QtCore.Qt.ApplicationModal)
+        self.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
         main_layout = QtWidgets.QVBoxLayout()
 
         # create headline
@@ -182,4 +182,4 @@ if __name__ == "__main__":
     with open("style.qss", "r") as f:
         _style = f.read()
         app.setStyleSheet(_style)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
